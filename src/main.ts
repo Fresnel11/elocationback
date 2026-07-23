@@ -35,7 +35,20 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:5173'],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:3001',
+        'http://localhost:5173',
+      ];
+      // Autoriser tous les déploiements Vercel
+      const vercelPattern = /^https:\/\/.*\.vercel\.app$/;
+
+      if (!origin || allowedOrigins.includes(origin) || vercelPattern.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS not allowed for origin: ${origin}`));
+      }
+    },
     credentials: true,
   });
 
