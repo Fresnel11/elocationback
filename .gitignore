@@ -1,5 +1,31 @@
+# Dépendances
 node_modules
+
+# Variables d'environnement
 .env
+.env.local
+.env.*.local
 
 # Récap perso des secrets/URLs de déploiement — jamais commité.
 /DEPLOYMENT.env
+
+# Build
+.dist
+dist
+
+# Uploads (fichiers uploadés par les utilisateurs)
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Système
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
