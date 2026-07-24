@@ -14,6 +14,7 @@ export declare class AuthService {
         message: string;
         phone: string;
         expiresAt: Date;
+        otpEmailSent: boolean;
     }>;
     requestOtp(email: string): Promise<{
         message: string;

@@ -14,12 +14,19 @@ const common_1 = require("@nestjs/common");
 const nodemailer = require("nodemailer");
 let EmailService = class EmailService {
     constructor() {
+        this.isConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASSWORD);
+        if (!this.isConfigured) {
+            console.warn('[EmailService] EMAIL_USER/EMAIL_PASSWORD absents : aucun email ne sera envoyé.');
+        }
         this.transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASSWORD,
             },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 15000,
         });
     }
     async sendOtpEmail(email, code, firstName) {

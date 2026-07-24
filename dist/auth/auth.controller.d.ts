@@ -15,6 +15,7 @@ export declare class AuthController {
         message: string;
         phone: string;
         expiresAt: Date;
+        otpEmailSent: boolean;
     }>;
     requestOtp(body: RequestOtpDto): Promise<{
         message: string;

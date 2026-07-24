@@ -47,15 +47,24 @@ export class AuthService {
       await this.usersService.setOtpForPhone(user.phone, code, expiresAt);
     }
 
-    // Send OTP by email if email is provided
+    // Send OTP by email if email is provided.
+    // L'utilisateur est déjà créé à ce stade : un échec d'envoi ne doit pas
+    // faire échouer l'inscription, sinon le compte existe mais l'appel renvoie 500.
+    let otpEmailSent = false;
     if (user.email) {
-      await this.emailService.sendOtpEmail(user.email, code, user.firstName);
+      try {
+        await this.emailService.sendOtpEmail(user.email, code, user.firstName);
+        otpEmailSent = true;
+      } catch (error) {
+        console.error("Echec envoi de l'OTP par email:", error.message);
+      }
     }
 
     return {
       message: 'Registration successful. Verify your phone with the OTP code.',
       phone: user.phone,
       expiresAt,
+      otpEmailSent,
     };
   }
 

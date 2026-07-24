@@ -5,13 +5,29 @@ import * as nodemailer from 'nodemailer';
 export class EmailService {
   private transporter;
 
+  /** false si EMAIL_USER/EMAIL_PASSWORD ne sont pas configurés. */
+  readonly isConfigured: boolean;
+
   constructor() {
+    this.isConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASSWORD);
+
+    if (!this.isConfigured) {
+      console.warn(
+        '[EmailService] EMAIL_USER/EMAIL_PASSWORD absents : aucun email ne sera envoyé.',
+      );
+    }
+
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
       },
+      // Sans ces bornes, une connexion SMTP injoignable fait pendre la requête
+      // HTTP appelante jusqu'au timeout du proxy (observé : 45 s puis 500).
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
   }
 
