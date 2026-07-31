@@ -17,8 +17,6 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { RequestOtpDto } from './dto/request-otp.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response } from 'express';
@@ -33,22 +31,22 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Inscription d\'un nouvel utilisateur',
-    description: 'Crée un nouveau compte utilisateur. Un code OTP sera envoyé par SMS pour vérifier le téléphone.'
+    description: 'Crée un nouveau compte utilisateur. Le compte est actif immédiatement et un token JWT est renvoyé.'
   })
-  @ApiBody({ 
+  @ApiBody({
     type: RegisterDto,
     description: 'Informations d\'inscription de l\'utilisateur'
   })
-  @ApiCreatedResponse({ 
-    description: 'Utilisateur créé avec succès. Vérifiez votre téléphone avec le code OTP.',
+  @ApiCreatedResponse({
+    description: 'Utilisateur créé et connecté avec succès.',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Registration successful. Verify your phone with the OTP code.' },
-        phone: { type: 'string', example: '+22999154678' },
-        expiresAt: { type: 'string', format: 'date-time' }
+        message: { type: 'string', example: 'Registration successful' },
+        access_token: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+        user: { type: 'object' }
       }
     }
   })
@@ -62,62 +60,10 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @Post('request-otp')
-  @ApiOperation({ 
-    summary: 'Demander un nouveau code OTP',
-    description: 'Envoie un nouveau code OTP par email à l\'adresse spécifiée.'
-  })
-  @ApiBody({ 
-    type: RequestOtpDto,
-    description: 'Email pour recevoir le code OTP'
-  })
-  @ApiOkResponse({ 
-    description: 'Code OTP envoyé avec succès',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'OTP sent to email' },
-        email: { type: 'string', example: 'user@example.com' },
-        expiresAt: { type: 'string', format: 'date-time' }
-      }
-    }
-  })
-  @ApiBadRequestResponse({ 
-    description: 'Email invalide ou utilisateur non trouvé' 
-  })
-  requestOtp(@Body() body: RequestOtpDto) {
-    return this.authService.requestOtp(body.email);
-  }
-
-  @Post('verify-otp')
-  @ApiOperation({ 
-    summary: 'Vérifier le code OTP',
-    description: 'Vérifie le code OTP reçu par email et active le compte utilisateur.'
-  })
-  @ApiBody({ 
-    type: VerifyOtpDto,
-    description: 'Code OTP et email à vérifier'
-  })
-  @ApiOkResponse({ 
-    description: 'OTP vérifié avec succès. Le compte est maintenant actif.',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email verified. Account activated.' }
-      }
-    }
-  })
-  @ApiBadRequestResponse({ 
-    description: 'Code OTP invalide ou expiré' 
-  })
-  verifyOtp(@Body() body: VerifyOtpDto) {
-    return this.authService.verifyOtp(body.email, body.code);
-  }
-
   @Post('login')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Connexion utilisateur',
-    description: 'Authentifie un utilisateur avec email et mot de passe. Le compte doit être activé via OTP.'
+    description: 'Authentifie un utilisateur avec email et mot de passe.'
   })
   @ApiBody({ 
     type: LoginDto,
@@ -146,8 +92,8 @@ export class AuthController {
   @ApiBadRequestResponse({ 
     description: 'Données de connexion invalides' 
   })
-  @ApiUnauthorizedResponse({ 
-    description: 'Identifiants invalides ou compte non activé. Activez votre compte avec le code OTP.' 
+  @ApiUnauthorizedResponse({
+    description: 'Identifiants invalides ou compte désactivé.'
   })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -191,7 +137,9 @@ export class AuthController {
     description: 'Récupère toutes les informations de l\'utilisateur connecté avec son profil.'
   })
   async getMe(@Request() req) {
-    const user = await this.authService.getUserWithProfile(req.user.sub);
+    // JwtStrategy.validate renvoie l'entité User, pas la charge utile du token :
+    // req.user.sub n'existe pas ici, l'identifiant est req.user.id.
+    const user = await this.authService.getUserWithProfile(req.user.id);
     return {
       id: user.id,
       email: user.email,

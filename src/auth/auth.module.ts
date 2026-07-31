@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Logger, Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -25,7 +25,31 @@ import { EmailService } from '../common/services/email.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, EmailService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    EmailService,
+    {
+      // La stratégie Google n'est instanciée que si les identifiants OAuth2 sont
+      // présents : passport-oauth2 lève sinon "requires a clientID option" et
+      // empêche le démarrage de toute l'application.
+      provide: GoogleStrategy,
+      useFactory: (configService: ConfigService, authService: AuthService) => {
+        const clientID = configService.get<string>('GOOGLE_CLIENT_ID');
+        const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
+
+        if (!clientID || !clientSecret) {
+          new Logger('AuthModule').warn(
+            'Connexion Google désactivée : GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET absents du .env',
+          );
+          return null;
+        }
+
+        return new GoogleStrategy(configService, authService);
+      },
+      inject: [ConfigService, AuthService],
+    },
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

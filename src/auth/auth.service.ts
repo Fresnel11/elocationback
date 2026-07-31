@@ -40,50 +40,25 @@ export class AuthService {
       }
     }
 
-    // generate OTP (6 digits) for phone verification
-    const code = (Math.floor(100000 + Math.random() * 900000)).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    if (user.phone) {
-      await this.usersService.setOtpForPhone(user.phone, code, expiresAt);
-    }
+    // Le compte est actif immédiatement et un token est renvoyé : l'utilisateur
+    // est connecté à la sortie du formulaire, sans étape de vérification.
+    await this.usersService.setLastLogin(user.id);
 
-    // Send OTP by email if email is provided.
-    // L'utilisateur est déjà créé à ce stade : un échec d'envoi ne doit pas
-    // faire échouer l'inscription, sinon le compte existe mais l'appel renvoie 500.
-    let otpEmailSent = false;
-    if (user.email) {
-      try {
-        await this.emailService.sendOtpEmail(user.email, code, user.firstName);
-        otpEmailSent = true;
-      } catch (error) {
-        console.error("Echec envoi de l'OTP par email:", error.message);
-      }
-    }
+    const payload = { sub: user.id, role: user.role, email: user.email };
 
     return {
-      message: 'Registration successful. Verify your phone with the OTP code.',
-      phone: user.phone,
-      expiresAt,
-      otpEmailSent,
+      message: 'Registration successful',
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        role: user.role,
+        profilePicture: user.profile?.avatar || user.profilePicture,
+      },
     };
-  }
-
-  async requestOtp(email: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (!user) throw new BadRequestException('User not found');
-    const code = (Math.floor(100000 + Math.random() * 900000)).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-    await this.usersService.setOtpForEmail(email, code, expiresAt);
-    await this.emailService.sendOtpEmail(email, code, user.firstName);
-    return { message: 'OTP sent to email', email, expiresAt };
-  }
-
-  async verifyOtp(email: string, code: string) {
-    const ok = await this.usersService.verifyOtpForEmail(email, code);
-    if (!ok) {
-      throw new BadRequestException('Invalid or expired OTP');
-    }
-    return { message: 'Email verified. Account activated.' };
   }
 
   async login(loginDto: LoginDto) {
@@ -94,7 +69,7 @@ export class AuthService {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('Account not activated. Please verify your email with the OTP code to activate your account.');
+      throw new UnauthorizedException('Account disabled. Please contact support.');
     }
 
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);

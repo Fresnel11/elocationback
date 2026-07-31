@@ -46,13 +46,16 @@ export class RegisterDto {
   email?: string;
 
   @ApiProperty({
-    description: 'Mot de passe (minimum 6 caractères)',
-    example: 'password123',
-    minLength: 6,
+    description: 'Mot de passe : 8 caractères minimum, avec au moins une majuscule, une minuscule et un chiffre',
+    example: 'Passw0rd',
+    minLength: 8,
     maxLength: 100
   })
   @IsString()
-  @MinLength(6)
+  @MinLength(8, { message: 'Le mot de passe doit contenir au moins 8 caractères' })
+  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+    message: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
+  })
   password: string;
 
   @ApiProperty({

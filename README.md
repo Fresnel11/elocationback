@@ -1,6 +1,6 @@
 # eLocation Backend (NestJS + TypeORM)
 
-Plateforme de mise en relation pour annonces (immobilier, véhicules, etc.). Backend API construite avec NestJS et MySQL, incluant auth JWT, OTP par SMS (mock), gestion d’annonces, paiements simulés et panneau admin, avec documentation Swagger.
+Plateforme de mise en relation pour annonces (immobilier, véhicules, etc.). Backend API construite avec NestJS et MySQL, incluant auth JWT, gestion d’annonces, paiements simulés et panneau admin, avec documentation Swagger.
 
 ## Sommaire
 - Présentation générale
@@ -10,7 +10,7 @@ Plateforme de mise en relation pour annonces (immobilier, véhicules, etc.). Bac
 - Lancer l’application
 - Documentation API (Swagger)
 - Modèles de données (entités)
-- Authentification, OTP & rôles
+- Authentification & rôles
 - Annonces (Ads)
 - Catégories
 - Paiements
@@ -23,7 +23,6 @@ Plateforme de mise en relation pour annonces (immobilier, véhicules, etc.). Bac
 ## Présentation générale
 eLocation est une API permettant:
 - l’enregistrement et la connexion d’utilisateurs
-- la vérification d’un compte via OTP (code SMS simulé) avant la connexion
 - la création et la gestion d’annonces avec photos
 - la catégorisation des annonces
 - la simulation de paiements mobile money (MTN/Moov)
@@ -118,9 +117,7 @@ Champs principaux:
 - birthDate (optionnel)
 - lastLogin (MAJ au login)
 - role (enum: USER, ADMIN)
-- isActive (bool, par défaut `false` – activé après OTP)
-- otpCode (6 chiffres, temporaire)
-- otpExpiresAt (expiration OTP)
+- isActive (bool, `true` à l’inscription – bascule à `false` si un admin désactive le compte)
 - createdAt, updatedAt
 
 Relations:
@@ -143,18 +140,16 @@ Relations:
 - userId
 - createdAt, updatedAt
 
-## Authentification, OTP & rôles
-### Flux d’inscription / activation
-1) `POST /auth/register`: crée un utilisateur inactif (`isActive=false`), génère un OTP (6 chiffres, 5 min) et le stocke.
-   - En dev, le code est renvoyé dans la réponse (`otpPreview`) pour faciliter les tests.
-   - En prod, intégrer un provider SMS (ex: Twilio, vonage, MTN/Moov API) pour l’envoi.
-2) `POST /auth/verify-otp`: vérifie le code pour `phone`. Si valide => active le compte (`isActive=true`).
-3) `POST /auth/login`: connexion possible uniquement si `isActive=true`.
+## Authentification & rôles
+### Flux d’inscription
+1) `POST /auth/register`: crée un utilisateur actif (`isActive=true`) et renvoie directement un `access_token` : l’utilisateur est connecté à la sortie du formulaire.
+2) `POST /auth/login`: connexion via email + mot de passe, refusée si `isActive=false` (compte désactivé par un admin).
+
+Le mot de passe oublié reste protégé par un code à 6 chiffres envoyé par email
+(`/auth/send-password-reset-code` puis `/auth/reset-password`).
 
 ### Endpoints Auth
 - `POST /auth/register` (public): firstName, lastName, phone, password, email (optionnel)
-- `POST /auth/request-otp` (public): renvoie un nouvel OTP pour un téléphone
-- `POST /auth/verify-otp` (public): vérifie l’OTP (phone + code)
 - `POST /auth/login` (public): login via email OU phone + password
 - `GET /auth/profile` (JWT): profil courant
 
@@ -237,7 +232,6 @@ npm run test:cov
 ```
 
 ## Roadmap (évolutions possibles)
-- Intégration réelle SMS (MTN/Moov/Twilio) pour l’OTP
 - Migrations TypeORM pour prod
 - Stockage d’images sur S3/Cloud Storage
 - Webhooks de paiement réels
@@ -246,8 +240,7 @@ npm run test:cov
 
 ---
 Pour tester rapidement:
-1) `POST /auth/register` → récupérer `otpPreview`
-2) `POST /auth/verify-otp` (phone + code)
-3) `POST /auth/login` → copier le JWT
-4) Ouvrir `http://localhost:3000/api-docs`, cliquer sur Authorize, coller le JWT
-5) Appeler les routes protégées (users/ads/payments/admin)
+1) `POST /auth/register` → copier le JWT renvoyé
+2) `POST /auth/login` → copier le JWT
+3) Ouvrir `http://localhost:3000/api-docs`, cliquer sur Authorize, coller le JWT
+4) Appeler les routes protégées (users/ads/payments/admin)

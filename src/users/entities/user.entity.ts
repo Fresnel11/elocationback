@@ -53,12 +53,6 @@ export class User {
   lastLogin: Date | null;
 
   @Column({ type: 'varchar', length: 6, nullable: true })
-  otpCode: string | null;
-
-  @Column({ type: 'timestamp', nullable: true })
-  otpExpiresAt: Date | null;
-
-  @Column({ type: 'varchar', length: 6, nullable: true })
   resetPasswordOtp: string | null;
 
   @Column({ type: 'timestamp', nullable: true })

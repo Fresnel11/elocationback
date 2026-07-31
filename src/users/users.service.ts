@@ -65,7 +65,7 @@ export class UsersService {
       profilePicture: createUserDto.profilePicture ?? null,
       birthDate: createUserDto.birthDate ? new Date(createUserDto.birthDate) : null,
       role: role,
-      isActive: false,
+      isActive: true,
     });
 
     return this.userRepository.save(user);
@@ -169,44 +169,10 @@ export class UsersService {
     await this.userRepository.update({ id }, { lastLogin: new Date() });
   }
 
-  async setOtpForPhone(phone: string, code: string, expiresAt: Date): Promise<void> {
-    const user = await this.findByPhone(phone);
-    if (!user) throw new NotFoundException('User not found');
-    await this.userRepository.update({ id: user.id }, { otpCode: code, otpExpiresAt: expiresAt });
-  }
-
-  async verifyOtpForPhone(phone: string, code: string): Promise<boolean> {
-    const user = await this.findByPhone(phone);
-    if (!user) throw new NotFoundException('User not found');
-    if (!user.otpCode || !user.otpExpiresAt) return false;
-    const isValid = user.otpCode === code && user.otpExpiresAt > new Date();
-    if (isValid) {
-      await this.userRepository.update({ id: user.id }, { isActive: true, otpCode: null, otpExpiresAt: null });
-    }
-    return isValid;
-  }
-
-  async setOtpForEmail(email: string, code: string, expiresAt: Date): Promise<void> {
-    const user = await this.findByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
-    await this.userRepository.update({ id: user.id }, { otpCode: code, otpExpiresAt: expiresAt });
-  }
-
   async setOtpForPasswordReset(email: string, code: string, expiresAt: Date): Promise<void> {
     const user = await this.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
     await this.userRepository.update({ id: user.id }, { resetPasswordOtp: code, resetPasswordOtpExpiresAt: expiresAt });
-  }
-
-  async verifyOtpForEmail(email: string, code: string): Promise<boolean> {
-    const user = await this.findByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
-    if (!user.otpCode || !user.otpExpiresAt) return false;
-    const isValid = user.otpCode === code && user.otpExpiresAt > new Date();
-    if (isValid) {
-      await this.userRepository.update({ id: user.id }, { isActive: true, otpCode: null, otpExpiresAt: null });
-    }
-    return isValid;
   }
 
   async createGoogleUser(googleData: any): Promise<User> {
