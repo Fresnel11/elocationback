@@ -6,6 +6,10 @@ import { Ad } from './entities/ad.entity';
 import { CreateAdDto } from './dto/create-ad.dto';
 import { UpdateAdDto } from './dto/update-ad.dto';
 import { SearchAdsDto } from './dto/search-ads.dto';
+import { Review, ReviewStatus } from '../reviews/entities/review.entity';
+
+/** Annonce enrichie de sa note agrégée, calculée à la volée pour la liste. */
+type AdWithRating = Ad & { averageRating: number; reviewsCount: number };
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../common/enums/user-role.enum';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -20,6 +24,8 @@ export class AdsService {
   constructor(
     @InjectRepository(Ad)
     private readonly adRepository: Repository<Ad>,
+    @InjectRepository(Review)
+    private readonly reviewRepository: Repository<Review>,
     private readonly priceAlertsService: PriceAlertsService,
     private readonly notificationsService: NotificationsService,
     private readonly cacheService: CacheService,
@@ -65,6 +71,9 @@ export class AdsService {
       maxPrice,
       location,
       isAvailable,
+      bedrooms,
+      bathrooms,
+      amenities,
       sortBy = 'createdAt',
       sortOrder = 'DESC',
       userLatitude,
@@ -72,10 +81,12 @@ export class AdsService {
       radius = 50,
     } = searchAdsDto;
 
-    // Génération de la clé de cache
+    // Génération de la clé de cache.
+    // Tout filtre absent d'ici renverrait le résultat d'une AUTRE recherche.
     const cacheKey = this.cacheService.generateCacheKey('ads', {
       page, limit, search, categoryId, minPrice, maxPrice, location,
-      isAvailable, sortBy, sortOrder, userCity, userLatitude, userLongitude, radius
+      isAvailable, bedrooms, bathrooms, amenities: amenities?.join(','),
+      sortBy, sortOrder, userCity, userLatitude, userLongitude, radius
     });
 
     // Vérifier le cache
@@ -96,9 +107,12 @@ export class AdsService {
         isAvailable: true 
       });
 
+    // LIKE et non ILIKE : ILIKE est propre à PostgreSQL et lève une erreur de
+    // syntaxe sous MySQL. La collation utf8mb4_unicode_ci rend déjà LIKE
+    // insensible à la casse.
     if (search) {
       queryBuilder.andWhere(
-        '(ad.title ILIKE :search OR ad.description ILIKE :search OR ad.location ILIKE :search)',
+        '(ad.title LIKE :search OR ad.description LIKE :search OR ad.location LIKE :search)',
         { search: `%${search}%` },
       );
     }
@@ -116,11 +130,31 @@ export class AdsService {
     }
 
     if (location) {
-      queryBuilder.andWhere('ad.location ILIKE :location', { location: `%${location}%` });
+      queryBuilder.andWhere('ad.location LIKE :location', { location: `%${location}%` });
     }
 
     if (isAvailable !== undefined) {
       queryBuilder.andWhere('ad.isAvailable = :isAvailable', { isAvailable });
+    }
+
+    // Chambres et salles de bain : seuils minimums, pas des égalités.
+    if (bedrooms !== undefined) {
+      queryBuilder.andWhere('ad.bedrooms >= :bedrooms', { bedrooms });
+    }
+
+    if (bathrooms !== undefined) {
+      queryBuilder.andWhere('ad.bathrooms >= :bathrooms', { bathrooms });
+    }
+
+    // amenities est une colonne JSON : JSON_CONTAINS exige que l'annonce
+    // propose TOUS les équipements demandés (ET, pas OU).
+    if (amenities?.length) {
+      amenities.forEach((amenity, index) => {
+        queryBuilder.andWhere(
+          `JSON_CONTAINS(ad.amenities, :amenity${index}, '$')`,
+          { [`amenity${index}`]: JSON.stringify(amenity) },
+        );
+      });
     }
 
     // A/B Testing pour l'algorithme de tri
@@ -174,7 +208,7 @@ export class AdsService {
     } : 'Aucune annonce');
 
     const result = {
-      ads,
+      ads: await this.withRatings(ads),
       pagination: {
         page,
         limit,
@@ -188,6 +222,38 @@ export class AdsService {
     await this.cacheService.set(cacheKey, result, ttl);
 
     return result;
+  }
+
+  /**
+   * Attache la note moyenne et le nombre d'avis à une page d'annonces.
+   *
+   * Une seule requête agrégée pour toute la page : le front appelait
+   * auparavant /reviews/ad/:id/rating pour chaque annonce, soit 12 requêtes
+   * HTTP supplémentaires par page — coûteux en données mobiles.
+   */
+  private async withRatings(ads: Ad[]): Promise<AdWithRating[]> {
+    if (!ads.length) return [];
+
+    const rows = await this.reviewRepository
+      .createQueryBuilder('review')
+      .leftJoin('review.ad', 'ad')
+      .select('ad.id', 'adId')
+      .addSelect('AVG(review.rating)', 'average')
+      .addSelect('COUNT(review.id)', 'total')
+      .where('ad.id IN (:...ids)', { ids: ads.map((ad) => ad.id) })
+      .andWhere('review.status = :status', { status: ReviewStatus.APPROVED })
+      .groupBy('ad.id')
+      .getRawMany<{ adId: string; average: string; total: string }>();
+
+    const byAdId = new Map(rows.map((row) => [row.adId, row]));
+
+    return ads.map((ad) => {
+      const row = byAdId.get(ad.id);
+      return Object.assign(ad, {
+        averageRating: row ? Math.round(Number(row.average) * 10) / 10 : 0,
+        reviewsCount: row ? Number(row.total) : 0,
+      });
+    });
   }
 
   async findOne(id: string, userId?: string): Promise<Ad> {

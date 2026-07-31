@@ -44,7 +44,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 65,
         amenities: ['wifi', 'tv', 'ac', 'kitchen'],
-        photos: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Villa spacieuse 4 chambres avec jardin',
@@ -54,7 +59,12 @@ export class AdSeeder {
         bathrooms: 3,
         area: 120,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking', 'garden'],
-        photos: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Studio moderne proche université',
@@ -64,7 +74,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 25,
         amenities: ['wifi', 'tv', 'kitchen'],
-        photos: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Maison 3 chambres avec cour',
@@ -74,7 +89,12 @@ export class AdSeeder {
         bathrooms: 2,
         area: 85,
         amenities: ['wifi', 'tv', 'kitchen', 'parking'],
-        photos: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Chambre meublée en colocation',
@@ -84,7 +104,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 15,
         amenities: ['wifi', 'tv'],
-        photos: ['https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Bureau moderne centre-ville',
@@ -94,7 +119,12 @@ export class AdSeeder {
         bathrooms: 2,
         area: 50,
         amenities: ['wifi', 'ac', 'parking', 'security'],
-        photos: ['https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Appartement 1 chambre meublé',
@@ -104,7 +134,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 40,
         amenities: ['wifi', 'tv', 'ac', 'kitchen'],
-        photos: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Villa de luxe avec piscine',
@@ -114,7 +149,12 @@ export class AdSeeder {
         bathrooms: 4,
         area: 200,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking', 'garden', 'pool', 'security'],
-        photos: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Studio étudiant équipé',
@@ -124,7 +164,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 20,
         amenities: ['wifi', 'tv', 'kitchen'],
-        photos: ['https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Maison familiale 4 chambres',
@@ -134,7 +179,12 @@ export class AdSeeder {
         bathrooms: 2,
         area: 100,
         amenities: ['wifi', 'tv', 'kitchen', 'parking', 'garden'],
-        photos: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Appartement 3 chambres standing',
@@ -144,7 +194,12 @@ export class AdSeeder {
         bathrooms: 2,
         area: 90,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking'],
-        photos: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Chambre simple meublée',
@@ -154,7 +209,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 12,
         amenities: ['wifi'],
-        photos: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Bureau partagé moderne',
@@ -164,7 +224,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 30,
         amenities: ['wifi', 'ac', 'security'],
-        photos: ['https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Villa 3 chambres avec piscine',
@@ -174,7 +239,12 @@ export class AdSeeder {
         bathrooms: 2,
         area: 110,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking', 'garden', 'pool'],
-        photos: ['https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Studio design centre-ville',
@@ -184,7 +254,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 30,
         amenities: ['wifi', 'tv', 'ac', 'kitchen'],
-        photos: ['https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Maison 2 chambres avec jardin',
@@ -194,7 +269,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 60,
         amenities: ['wifi', 'tv', 'kitchen', 'garden'],
-        photos: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Appartement duplex 4 chambres',
@@ -204,7 +284,12 @@ export class AdSeeder {
         bathrooms: 3,
         area: 130,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking'],
-        photos: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Chambre VIP meublée',
@@ -214,7 +299,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 20,
         amenities: ['wifi', 'tv', 'ac'],
-        photos: ['https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Local commercial équipé',
@@ -224,7 +314,12 @@ export class AdSeeder {
         bathrooms: 1,
         area: 80,
         amenities: ['wifi', 'ac', 'security'],
-        photos: ['https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       },
       {
         title: 'Villa familiale 6 chambres',
@@ -234,7 +329,12 @@ export class AdSeeder {
         bathrooms: 4,
         area: 250,
         amenities: ['wifi', 'tv', 'ac', 'kitchen', 'parking', 'garden', 'pool', 'security'],
-        photos: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop']
+        photos: [
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1600&q=80&fit=crop',
+          'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1600&q=80&fit=crop'
+        ]
       }
     ];
 

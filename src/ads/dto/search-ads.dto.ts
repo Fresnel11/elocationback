@@ -94,6 +94,44 @@ export class SearchAdsDto extends PaginationDto {
   limit?: number;
 
   @ApiProperty({
+    description: 'Nombre minimum de chambres',
+    example: 2,
+    required: false,
+    minimum: 0
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  bedrooms?: number;
+
+  @ApiProperty({
+    description: 'Nombre minimum de salles de bain',
+    example: 1,
+    required: false,
+    minimum: 0
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  bathrooms?: number;
+
+  @ApiProperty({
+    description: 'Équipements requis, séparés par des virgules. L\'annonce doit tous les proposer.',
+    example: 'wifi,parking',
+    required: false
+  })
+  @IsOptional()
+  // Accepte « wifi,parking » comme ?amenities=wifi&amenities=parking.
+  @Transform(({ value }) => {
+    const list = Array.isArray(value) ? value : String(value ?? '').split(',');
+    return list.map((item: string) => item.trim()).filter(Boolean);
+  })
+  @IsString({ each: true })
+  amenities?: string[];
+
+  @ApiProperty({
     description: 'Champ de tri',
     example: 'createdAt',
     enum: ['createdAt', 'price', 'title', 'location', 'distance'],
