@@ -1,22 +1,33 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PriceAlertsService } from '../price-alerts/price-alerts.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { In, Repository, SelectQueryBuilder } from 'typeorm';
 import { Ad } from './entities/ad.entity';
 import { CreateAdDto } from './dto/create-ad.dto';
 import { UpdateAdDto } from './dto/update-ad.dto';
 import { SearchAdsDto } from './dto/search-ads.dto';
 import { Review, ReviewStatus } from '../reviews/entities/review.entity';
+import {
+  DemarcheurProfile,
+  DemarcheurStatus,
+} from '../demarcheurs/entities/demarcheur-profile.entity';
 
-/** Annonce enrichie de sa note agrégée, calculée à la volée pour la liste. */
-type AdWithRating = Ad & { averageRating: number; reviewsCount: number };
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../common/enums/user-role.enum';
+import { AdPublisherRole } from '../common/enums/ad-publisher-role.enum';
 import { NotificationsService } from '../notifications/notifications.service';
 import { LocationService } from '../services/locationService';
 import { CacheService } from '../cache/cache.service';
 import { RecommendationsService } from '../recommendations/recommendations.service';
 import { ABTestingService } from '../ab-testing/ab-testing.service';
+
+/** Annonce enrichie de sa note agrégée, calculée à la volée pour la liste. */
+type AdWithRating = Ad & {
+  averageRating: number;
+  reviewsCount: number;
+  /** L'auteur de l'annonce est un démarcheur approuvé. */
+  isDemarcheur: boolean;
+};
 
 
 @Injectable()
@@ -31,6 +42,8 @@ export class AdsService {
     private readonly cacheService: CacheService,
     private readonly recommendationsService: RecommendationsService,
     private readonly abTestingService: ABTestingService,
+    @InjectRepository(DemarcheurProfile)
+    private readonly demarcheurRepository: Repository<DemarcheurProfile>,
   ) {}
 
   async create(createAdDto: CreateAdDto, user: User): Promise<Ad> {
@@ -38,14 +51,23 @@ export class AdsService {
       throw new ForbiddenException('Vous devez vérifier votre identité pour publier une annonce');
     }
 
+    await this.assertMandateIsValid(createAdDto, user.id);
+
     const whatsappLink = createAdDto.whatsappNumber
       ? `https://wa.me/${createAdDto.whatsappNumber.replace(/\D/g, '')}`
       : undefined;
+
+    const isMandate = createAdDto.publisherRole === AdPublisherRole.MIDDLEMAN;
 
     const ad = this.adRepository.create({
       ...createAdDto,
       whatsappLink,
       userId: user.id,
+      // Les coordonnées du mandant n'ont de sens que sur une annonce mandatée :
+      // on les efface si le rôle n'est pas celui d'un démarcheur.
+      ownerName: isMandate ? createAdDto.ownerName : null,
+      ownerPhone: isMandate ? createAdDto.ownerPhone : null,
+      ownerConsent: isMandate ? true : false,
     } as Partial<Ad>);
 
     const savedAd = await this.adRepository.save(ad);
@@ -176,13 +198,23 @@ export class AdsService {
       if (userCity && !location) {
         const nearbyCities = LocationService.getNearbyCities(userCity);
         
+        // LIKE et non ILIKE (PostgreSQL), et paramètres liés plutôt
+        // qu'interpolés : userCity vient de la requête HTTP.
+        const nearbyConditions = nearbyCities
+          .map((_, i) => `WHEN ad.location LIKE :nearby${i} THEN 2`)
+          .join(' ');
+
         queryBuilder.addSelect(
-          `CASE 
-            WHEN ad.location ILIKE '%${userCity}%' THEN 1
-            WHEN ad.location ILIKE ANY(ARRAY[${nearbyCities.map(city => `'%${city}%'`).join(',')}]) THEN 2
+          `CASE
+            WHEN ad.location LIKE :userCity THEN 1
+            ${nearbyConditions}
             ELSE 3
           END`,
-          'location_priority'
+          'location_priority',
+        );
+        queryBuilder.setParameter('userCity', `%${userCity}%`);
+        nearbyCities.forEach((city, i) =>
+          queryBuilder.setParameter(`nearby${i}`, `%${city}%`),
         );
         
         queryBuilder.orderBy('location_priority', 'ASC');
@@ -225,11 +257,48 @@ export class AdsService {
   }
 
   /**
-   * Attache la note moyenne et le nombre d'avis à une page d'annonces.
+   * Contrôle qu'une publication « pour le compte d'un propriétaire » est
+   * légitime.
    *
-   * Une seule requête agrégée pour toute la page : le front appelait
-   * auparavant /reviews/ad/:id/rating pour chaque annonce, soit 12 requêtes
-   * HTTP supplémentaires par page — coûteux en données mobiles.
+   * Sans ce contrôle, publisherRole ne serait qu'une déclaration : n'importe
+   * qui pourrait se présenter comme démarcheur sur ses annonces, ce qui viderait
+   * le badge de son sens.
+   */
+  private async assertMandateIsValid(dto: CreateAdDto, userId: string): Promise<void> {
+    if (dto.publisherRole !== AdPublisherRole.MIDDLEMAN) return;
+
+    const approved = await this.demarcheurRepository.count({
+      where: { userId, status: DemarcheurStatus.APPROVED },
+    });
+    if (!approved) {
+      throw new ForbiddenException(
+        "Seul un démarcheur vérifié peut publier pour le compte d'un propriétaire",
+      );
+    }
+
+    if (!dto.ownerName || !dto.ownerPhone) {
+      throw new BadRequestException(
+        'Indiquez le nom et le téléphone du propriétaire mandant',
+      );
+    }
+
+    if (!dto.ownerConsent) {
+      throw new BadRequestException(
+        "Vous devez attester avoir l'accord du propriétaire",
+      );
+    }
+  }
+
+  /**
+   * Enrichit une page d'annonces : note moyenne, nombre d'avis, et statut de
+   * démarcheur de l'auteur.
+   *
+   * Deux requêtes agrégées pour toute la page, quel que soit son volume. Le
+   * front appelait auparavant /reviews/ad/:id/rating pour chaque annonce, soit
+   * 12 requêtes HTTP supplémentaires par page — coûteux en données mobiles.
+   *
+   * Le statut de démarcheur est lu à chaque affichage plutôt que recopié sur
+   * l'annonce : une suspension retire le badge immédiatement, partout.
    */
   private async withRatings(ads: Ad[]): Promise<AdWithRating[]> {
     if (!ads.length) return [];
@@ -247,11 +316,21 @@ export class AdsService {
 
     const byAdId = new Map(rows.map((row) => [row.adId, row]));
 
+    const demarcheurs = await this.demarcheurRepository.find({
+      where: {
+        userId: In([...new Set(ads.map((ad) => ad.userId))]),
+        status: DemarcheurStatus.APPROVED,
+      },
+      select: ['userId'],
+    });
+    const demarcheurIds = new Set(demarcheurs.map((d) => d.userId));
+
     return ads.map((ad) => {
       const row = byAdId.get(ad.id);
       return Object.assign(ad, {
         averageRating: row ? Math.round(Number(row.average) * 10) / 10 : 0,
         reviewsCount: row ? Number(row.total) : 0,
+        isDemarcheur: demarcheurIds.has(ad.userId),
       });
     });
   }

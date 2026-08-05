@@ -36,6 +36,7 @@ import { ContactModule } from './contact/contact.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { ABTestingModule } from './ab-testing/ab-testing.module';
 import { MonerooModule } from './moneroo/moneroo.module';
+import { DemarcheursModule } from './demarcheurs/demarcheurs.module';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { MonerooModule } from './moneroo/moneroo.module';
     RecommendationsModule,
     ABTestingModule,
     MonerooModule,
+    DemarcheursModule,
   ],
   providers: [JwtService],
 })

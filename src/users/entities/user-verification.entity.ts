@@ -7,9 +7,9 @@ export enum VerificationStatus {
   REJECTED = 'rejected'
 }
 
+/** Pièces acceptées : carte nationale d'identité et passeport uniquement. */
 export enum DocumentType {
   CNI = 'cni',
-  CIP = 'cip',
   PASSPORT = 'passport'
 }
 

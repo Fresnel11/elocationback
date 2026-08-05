@@ -128,6 +128,24 @@ export class Ad {
   })
   publisherRole!: AdPublisherRole;
 
+  // ---- Mandat : renseigne lorsqu'un démarcheur publie pour un propriétaire ----
+
+  /** Nom du propriétaire pour le compte duquel l'annonce est publiée. */
+  @Column({ type: 'varchar', nullable: true })
+  ownerName!: string | null;
+
+  /** Contact du propriétaire, visible seulement en cas de litige. */
+  @Column({ type: 'varchar', nullable: true })
+  ownerPhone!: string | null;
+
+  /**
+   * Le démarcheur atteste avoir l'accord du propriétaire.
+   * Conservé comme trace : c'est ce qui distingue un mandat d'une annonce
+   * publiée à l'insu du propriétaire.
+   */
+  @Column({ type: 'boolean', default: false })
+  ownerConsent!: boolean;
+
   @ManyToOne(() => User, (user) => user.ads)
   @JoinColumn({ name: 'userId' })
   user!: User;

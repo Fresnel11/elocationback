@@ -34,7 +34,7 @@ export class AddUserVerification1734567890000 implements MigrationInterface {
           {
             name: 'documentType',
             type: 'enum',
-            enum: ['cni', 'cip', 'passport'],
+            enum: ['cni', 'passport'],
             isNullable: false,
           },
           {

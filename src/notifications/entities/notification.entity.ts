@@ -13,7 +13,10 @@ export enum NotificationType {
   AD_REJECTED = 'ad_rejected',
   PRICE_CHANGE = 'price_change',
   VERIFICATION_APPROVED = 'verification_approved',
-  VERIFICATION_REJECTED = 'verification_rejected'
+  VERIFICATION_REJECTED = 'verification_rejected',
+  DEMARCHEUR_APPROVED = 'demarcheur_approved',
+  DEMARCHEUR_REJECTED = 'demarcheur_rejected',
+  DEMARCHEUR_SUSPENDED = 'demarcheur_suspended'
 }
 
 @Entity('notifications')

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsBoolean, MinLength, Min, MaxLength, IsArray, IsUUID } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, MinLength, Min, MaxLength, IsArray, IsUUID, IsEnum, Matches } from 'class-validator';
+import { AdPublisherRole } from '../../common/enums/ad-publisher-role.enum';
 
 export class CreateAdDto {
   @ApiProperty({
@@ -238,8 +239,41 @@ export class CreateAdDto {
     default: 'owner'
   })
   @IsOptional()
+  @IsEnum(AdPublisherRole, { message: 'Rôle de publication invalide' })
+  publisherRole?: AdPublisherRole;
+
+  // ---- Mandat : obligatoires quand publisherRole vaut « middleman » ----
+
+  @ApiProperty({
+    description: 'Nom du propriétaire (publication par un démarcheur)',
+    example: 'Koffi Adjovi',
+    required: false,
+  })
+  @IsOptional()
   @IsString()
-  publisherRole?: string;
+  @MinLength(3)
+  @MaxLength(120)
+  ownerName?: string;
+
+  @ApiProperty({
+    description: 'Téléphone du propriétaire, au format international',
+    example: '+2290196123456',
+    required: false,
+  })
+  @IsOptional()
+  @Matches(/^\+[1-9]\d{7,14}$/, {
+    message: 'Le téléphone du propriétaire doit être au format international',
+  })
+  ownerPhone?: string;
+
+  @ApiProperty({
+    description: "Le démarcheur atteste avoir l'accord du propriétaire",
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  ownerConsent?: boolean;
 
   @ApiProperty({
     description: 'Modalité de paiement',
