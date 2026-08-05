@@ -3,35 +3,35 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity('ab_tests')
 export class ABTest {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  description: string;
+  description!: string;
 
   @Column('json')
-  algorithms: {
+  algorithms!: {
     A: { name: string; config: any };
     B: { name: string; config: any };
   };
 
   @Column({ default: 50 })
-  trafficSplit: number; // Pourcentage pour algorithme A
+  trafficSplit!: number; // Pourcentage pour algorithme A
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column('json', { nullable: true })
-  metrics: {
+  metrics!: {
     A: { views: number; clicks: number; conversions: number };
     B: { views: number; clicks: number; conversions: number };
   };
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

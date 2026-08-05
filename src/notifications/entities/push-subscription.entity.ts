@@ -4,30 +4,30 @@ import { User } from '../../users/entities/user.entity';
 @Entity('push_subscriptions')
 export class PushSubscription {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ type: 'text' })
-  endpoint: string;
+  endpoint!: string;
 
   @Column({ type: 'text', nullable: true })
-  p256dh: string;
+  p256dh!: string;
 
   @Column({ type: 'text', nullable: true })
-  auth: string;
+  auth!: string;
 
   @Column({ default: true, name: 'is_active' })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

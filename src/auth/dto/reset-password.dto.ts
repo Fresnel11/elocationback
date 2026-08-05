@@ -7,14 +7,14 @@ export class ResetPasswordDto {
     example: 'user@example.com'
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'Code OTP reçu par email',
     example: '123456'
   })
   @IsString()
-  code: string;
+  code!: string;
 
   @ApiProperty({
     description: 'Nouveau mot de passe : 8 caractères minimum, avec au moins une majuscule, une minuscule et un chiffre',
@@ -26,5 +26,5 @@ export class ResetPasswordDto {
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
   })
-  newPassword: string;
+  newPassword!: string;
 }

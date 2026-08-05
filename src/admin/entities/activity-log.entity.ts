@@ -4,36 +4,36 @@ import { User } from '../../users/entities/user.entity';
 @Entity('activity_logs')
 export class ActivityLog {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  action: string; // CREATE, UPDATE, DELETE, LOGIN, etc.
+  action!: string; // CREATE, UPDATE, DELETE, LOGIN, etc.
 
   @Column()
-  entity: string; // User, Ad, Booking, etc.
+  entity!: string; // User, Ad, Booking, etc.
 
   @Column({ nullable: true })
-  entityId: string;
+  entityId!: string;
 
   @Column('json', { nullable: true })
-  oldData: any;
+  oldData!: any;
 
   @Column('json', { nullable: true })
-  newData: any;
+  newData!: any;
 
   @Column({ nullable: true })
-  ipAddress: string;
+  ipAddress!: string;
 
   @Column({ nullable: true })
-  userAgent: string;
+  userAgent!: string;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column({ nullable: true })
-  userId: string;
+  userId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

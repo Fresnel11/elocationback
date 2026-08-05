@@ -13,27 +13,27 @@ export enum NotificationType {
 @Entity('notification_preferences')
 export class NotificationPreference {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ type: 'enum', enum: NotificationType })
-  type: NotificationType;
+  type!: NotificationType;
 
   @Column({ default: true, name: 'email_enabled' })
-  emailEnabled: boolean;
+  emailEnabled!: boolean;
 
   @Column({ default: true, name: 'push_enabled' })
-  pushEnabled: boolean;
+  pushEnabled!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

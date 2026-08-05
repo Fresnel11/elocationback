@@ -3,10 +3,10 @@ import { IsString, IsUUID, IsNotEmpty, IsOptional, IsIn } from 'class-validator'
 export class CreateMessageDto {
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
   @IsUUID()
-  receiverId: string;
+  receiverId!: string;
 
   @IsOptional()
   @IsUUID()

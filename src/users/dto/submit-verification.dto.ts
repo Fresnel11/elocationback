@@ -4,14 +4,14 @@ import { DocumentType } from '../entities/user-verification.entity';
 export class SubmitVerificationDto {
   @IsNotEmpty()
   @IsString()
-  selfiePhoto: string;
+  selfiePhoto!: string;
 
   @IsEnum(DocumentType)
-  documentType: DocumentType;
+  documentType!: DocumentType;
 
   @IsNotEmpty()
   @IsString()
-  documentFrontPhoto: string;
+  documentFrontPhoto!: string;
 
   @IsOptional()
   @IsString()

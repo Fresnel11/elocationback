@@ -10,7 +10,7 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(2)
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({
     description: 'Nom de famille de l\'utilisateur',
@@ -20,7 +20,7 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(2)
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({
     description: 'Numéro de téléphone (format international)',
@@ -31,7 +31,7 @@ export class CreateUserDto {
   @Matches(/^\+[1-9]\d{1,14}$/, {
     message: 'Le numéro de téléphone doit être au format international (+22999154678)'
   })
-  phone: string;
+  phone!: string;
 
   @ApiProperty({
     description: 'Email de l\'utilisateur',
@@ -50,7 +50,7 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
 
 

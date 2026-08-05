@@ -11,27 +11,27 @@ export enum PointType {
 @Entity('loyalty_points')
 export class LoyaltyPoints {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ type: 'enum', enum: PointType })
-  type: PointType;
+  type!: PointType;
 
   @Column()
-  points: number;
+  points!: number;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ name: 'reference_id', nullable: true })
-  referenceId: string;
+  referenceId!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 }

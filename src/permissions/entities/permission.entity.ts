@@ -4,23 +4,23 @@ import { Role } from '../../roles/entities/role.entity';
 @Entity('permissions')
 export class Permission {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true, length: 100 })
-  name: string;
+  name!: string;
 
   @Column()
-  description: string;
+  description!: string;
 
   @Column({ default: false })
-  isSystemPermission: boolean;
+  isSystemPermission!: boolean;
 
   @ManyToMany(() => Role, role => role.permissions)
-  roles: Role[];
+  roles!: Role[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

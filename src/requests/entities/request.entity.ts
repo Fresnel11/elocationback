@@ -15,55 +15,55 @@ import { Response } from '../../responses/entities/response.entity';
 @Entity('requests')
 export class Request {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column('text')
-  description: string;
+  description!: string;
 
   @Column()
-  location: string;
+  location!: string;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  maxBudget: number;
+  maxBudget!: number;
 
   @Column({ type: 'int', nullable: true })
-  bedrooms: number;
+  bedrooms!: number;
 
   @Column({ type: 'int', nullable: true })
-  bathrooms: number;
+  bathrooms!: number;
 
   @Column({ type: 'int', nullable: true })
-  minArea: number;
+  minArea!: number;
 
   @Column('json', { nullable: true })
-  desiredAmenities: string[];
+  desiredAmenities!: string[];
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @ManyToOne(() => User, (user) => user.requests)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => Category, (category) => category.requests)
   @JoinColumn({ name: 'categoryId' })
-  category: Category;
+  category!: Category;
 
   @Column()
-  categoryId: string;
+  categoryId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @OneToMany(() => Response, (response) => response.request)
-  responses: Response[];
+  responses!: Response[];
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

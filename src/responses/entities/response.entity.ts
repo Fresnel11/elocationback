@@ -13,43 +13,43 @@ import { Request } from '../../requests/entities/request.entity';
 @Entity('responses')
 export class Response {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column('text')
-  message: string;
+  message!: string;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  proposedPrice: number;
+  proposedPrice!: number;
 
   @Column()
-  contactPhone: string;
+  contactPhone!: string;
 
   @Column({ nullable: true })
-  contactEmail: string;
+  contactEmail!: string;
 
   @Column({ type: 'date', nullable: true })
-  availableFrom: Date;
+  availableFrom!: Date;
 
   @Column('json', { nullable: true })
-  images: string[];
+  images!: string[];
 
   @ManyToOne(() => User, (user) => user.responses)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => Request, (request) => request.responses)
   @JoinColumn({ name: 'requestId' })
-  request: Request;
+  request!: Request;
 
   @Column()
-  requestId: string;
+  requestId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

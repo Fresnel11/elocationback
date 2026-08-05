@@ -5,16 +5,16 @@ import { Ad } from '../../ads/entities/ad.entity';
 @Entity('favorites')
 export class Favorite {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User, user => user.favorites, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @ManyToOne(() => Ad, ad => ad.favorites, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'adId' })
-  ad: Ad;
+  ad!: Ad;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

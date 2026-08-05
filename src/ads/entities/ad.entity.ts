@@ -18,146 +18,146 @@ import { Favorite } from '../../favorites/entities/favorite.entity';
 @Entity('ads')
 export class Ad {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column('text')
-  description: string;
+  description!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @Column({
     type: 'enum',
     enum: ['monthly', 'daily', 'weekly', 'hourly', 'fixed'],
     default: 'monthly'
   })
-  paymentMode: string;
+  paymentMode!: string;
 
   @Column()
-  location: string;
+  location!: string;
 
   @Column({ default: true })
-  isAvailable: boolean;
+  isAvailable!: boolean;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ default: false })
-  allowBooking: boolean;
+  allowBooking!: boolean;
 
   @Column('json')
-  photos: string[];
+  photos!: string[];
 
   @Column({ nullable: true })
-  video: string;
+  video!: string;
 
   @Column({ type: 'int', nullable: true })
-  bedrooms: number;
+  bedrooms!: number;
 
   @Column({ type: 'int', nullable: true })
-  bathrooms: number;
+  bathrooms!: number;
 
   @Column({ type: 'int', nullable: true })
-  area: number;
+  area!: number;
 
   @Column('json', { nullable: true })
-  amenities: string[];
+  amenities!: string[];
 
   @Column({ nullable: true })
-  whatsappLink: string;
+  whatsappLink!: string;
 
   @Column({ nullable: true })
-  whatsappNumber: string;
+  whatsappNumber!: string;
 
   @Column('decimal', { precision: 10, scale: 8, nullable: true })
-  latitude: number;
+  latitude!: number;
 
   @Column('decimal', { precision: 11, scale: 8, nullable: true })
-  longitude: number;
+  longitude!: number;
 
   // Champs génériques pour différentes catégories
   @Column({ nullable: true })
-  brand: string; // Marque (véhicules, électroménager, etc.)
+  brand!: string; // Marque (véhicules, électroménager, etc.)
 
   @Column({ nullable: true })
-  model: string; // Modèle
+  model!: string; // Modèle
 
   @Column({ type: 'int', nullable: true })
-  year: number; // Année (véhicules, électroménager)
+  year!: number; // Année (véhicules, électroménager)
 
   @Column({ nullable: true })
-  condition: string; // État (neuf, bon, usagé)
+  condition!: string; // État (neuf, bon, usagé)
 
   @Column({ nullable: true })
-  color: string; // Couleur
+  color!: string; // Couleur
 
   @Column({ nullable: true })
-  fuel: string; // Carburant (véhicules)
+  fuel!: string; // Carburant (véhicules)
 
   @Column({ nullable: true })
-  transmission: string; // Transmission (véhicules)
+  transmission!: string; // Transmission (véhicules)
 
   @Column({ type: 'int', nullable: true })
-  mileage: number; // Kilométrage (véhicules)
+  mileage!: number; // Kilométrage (véhicules)
 
   @Column({ nullable: true })
-  size: string; // Taille/Dimensions
+  size!: string; // Taille/Dimensions
 
   @Column({ nullable: true })
-  weight: string; // Poids
+  weight!: string; // Poids
 
   @Column({ nullable: true })
-  power: string; // Puissance/Consommation
+  power!: string; // Puissance/Consommation
 
   @Column('json', { nullable: true })
-  specifications: string[]; // Spécifications techniques
+  specifications!: string[]; // Spécifications techniques
 
   @Column('json', { nullable: true })
-  features: string[]; // Caractéristiques/Options
+  features!: string[]; // Caractéristiques/Options
 
   @Column({ type: 'int', default: 0 })
-  views: number;
+  views!: number;
 
   @Column({
     type: 'enum',
     enum: AdPublisherRole,
     default: AdPublisherRole.OWNER
   })
-  publisherRole: AdPublisherRole;
+  publisherRole!: AdPublisherRole;
 
   @ManyToOne(() => User, (user) => user.ads)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => Category, (category) => category.ads)
   @JoinColumn({ name: 'categoryId' })
-  category: Category;
+  category!: Category;
 
   @Column()
-  categoryId: string;
+  categoryId!: string;
 
   @ManyToOne(() => SubCategory, (subCategory) => subCategory.ads)
   @JoinColumn({ name: 'subCategoryId' })
-  subCategory: SubCategory;
+  subCategory!: SubCategory;
 
   @Column({ nullable: true })
-  subCategoryId: string;
+  subCategoryId!: string;
 
   @OneToMany(() => Review, review => review.ad)
-  reviews: Review[];
+  reviews!: Review[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.ad)
-  favorites: Favorite[];
+  favorites!: Favorite[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -3,35 +3,35 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity('user_analytics')
 export class UserAnalytics {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @Column({ name: 'total_ads', default: 0 })
-  totalAds: number;
+  totalAds!: number;
 
   @Column({ name: 'active_ads', default: 0 })
-  activeAds: number;
+  activeAds!: number;
 
   @Column({ name: 'total_views', default: 0 })
-  totalViews: number;
+  totalViews!: number;
 
   @Column({ name: 'total_bookings', default: 0 })
-  totalBookings: number;
+  totalBookings!: number;
 
   @Column({ name: 'total_revenue', type: 'decimal', precision: 10, scale: 2, default: 0 })
-  totalRevenue: number;
+  totalRevenue!: number;
 
   @Column({ name: 'occupancy_rate', type: 'decimal', precision: 5, scale: 2, default: 0 })
-  occupancyRate: number;
+  occupancyRate!: number;
 
   @Column({ name: 'average_rating', type: 'decimal', precision: 3, scale: 2, default: 0 })
-  averageRating: number;
+  averageRating!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

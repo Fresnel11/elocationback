@@ -14,60 +14,60 @@ export enum BookingStatus {
 @Entity('bookings')
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => Ad, { eager: true })
-  ad: Ad;
+  ad!: Ad;
 
   @ManyToOne(() => User, { eager: true })
-  tenant: User;
+  tenant!: User;
 
   @ManyToOne(() => User, { eager: true })
-  owner: User;
+  owner!: User;
 
   @Column({ type: 'date' })
-  startDate: Date;
+  startDate!: Date;
 
   @Column({ type: 'date' })
-  endDate: Date;
+  endDate!: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  totalPrice: number;
+  totalPrice!: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  deposit: number;
+  deposit!: number;
 
   @Column({
     type: 'enum',
     enum: BookingStatus,
     default: BookingStatus.PENDING
   })
-  status: BookingStatus;
+  status!: BookingStatus;
 
   @Column({ type: 'text', nullable: true })
-  message: string;
+  message!: string;
 
   @Column({ type: 'text', nullable: true })
-  cancellationReason: string;
+  cancellationReason!: string;
 
   @Column({ type: 'varchar', nullable: true })
-  paymentId: string;
+  paymentId!: string;
 
   @Column({ type: 'varchar', nullable: true })
-  payoutId: string;
+  payoutId!: string;
 
   @Column({ type: 'datetime', nullable: true })
-  paidAt: Date;
+  paidAt!: Date;
 
   @Column({ type: 'boolean', default: false })
-  fundsReleased: boolean;
+  fundsReleased!: boolean;
 
   @Column({ type: 'datetime', nullable: true })
-  fundsReleasedAt: Date;
+  fundsReleasedAt!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

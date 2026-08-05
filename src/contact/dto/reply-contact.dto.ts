@@ -3,9 +3,9 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ReplyContactDto {
   @IsNotEmpty()
   @IsString()
-  subject: string;
+  subject!: string;
 
   @IsNotEmpty()
   @IsString()
-  message: string;
+  message!: string;
 }

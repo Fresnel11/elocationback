@@ -13,28 +13,28 @@ export enum InteractionType {
 @Entity('user_interactions')
 export class UserInteraction {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ name: 'ad_id' })
-  adId: string;
+  adId!: string;
 
   @ManyToOne(() => Ad)
   @JoinColumn({ name: 'ad_id' })
-  ad: Ad;
+  ad!: Ad;
 
   @Column({ type: 'enum', enum: InteractionType })
-  type: InteractionType;
+  type!: InteractionType;
 
   @Column({ type: 'json', nullable: true })
-  metadata: any;
+  metadata!: any;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 }

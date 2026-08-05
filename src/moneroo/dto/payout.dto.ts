@@ -2,10 +2,10 @@ import { IsNumber, IsString, IsObject } from 'class-validator';
 
 export class PayoutDto {
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsObject()
-  recipient: {
+  recipient!: {
     phone?: string;
     email?: string;
     name?: string;

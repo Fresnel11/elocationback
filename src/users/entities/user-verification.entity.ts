@@ -16,49 +16,49 @@ export enum DocumentType {
 @Entity('user_verifications')
 export class UserVerification {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column('longtext')
-  selfiePhoto: string;
+  selfiePhoto!: string;
 
   @Column({
     type: 'enum',
     enum: DocumentType
   })
-  documentType: DocumentType;
+  documentType!: DocumentType;
 
   @Column('longtext')
-  documentFrontPhoto: string;
+  documentFrontPhoto!: string;
 
   @Column({ type: 'longtext', nullable: true })
-  documentBackPhoto: string;
+  documentBackPhoto!: string;
 
   @Column({
     type: 'enum',
     enum: VerificationStatus,
     default: VerificationStatus.PENDING
   })
-  status: VerificationStatus;
+  status!: VerificationStatus;
 
   @Column({ nullable: true })
-  rejectionReason: string;
+  rejectionReason!: string;
 
   @Column({ nullable: true })
-  reviewedBy: string;
+  reviewedBy!: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  reviewedAt: Date;
+  reviewedAt!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

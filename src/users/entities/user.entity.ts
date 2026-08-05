@@ -13,100 +13,100 @@ import { UserVerification } from './user-verification.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column('varchar', { length: 255, unique: true, nullable: true })
-  email: string | null;
+  email!: string | null;
 
   @Column('varchar', { length: 100 })
-  firstName: string;
+  firstName!: string;
 
   @Column('varchar', { length: 100 })
-  lastName: string;
+  lastName!: string;
 
   @Column('varchar', { length: 20, unique: true, nullable: true })
-  phone: string | null;
+  phone!: string | null;
 
   @Column('varchar', { length: 20, nullable: true })
-  whatsappNumber: string | null;
+  whatsappNumber!: string | null;
 
   @Column('varchar', { length: 255, nullable: true })
   @Exclude()
-  password: string | null;
+  password!: string | null;
 
   @Column('varchar', { length: 255, nullable: true, unique: true })
-  googleId: string | null;
+  googleId!: string | null;
 
   @Column('varchar', { length: 512, nullable: true })
-  profilePicture: string | null;
+  profilePicture!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  publicKey: string | null;
+  publicKey!: string | null;
 
   @Column({ type: 'date', nullable: true })
-  birthDate: Date | null;
+  birthDate!: Date | null;
 
   @Column({ type: 'enum', enum: ['masculin', 'féminin'], nullable: true })
-  gender: 'masculin' | 'féminin' | null;
+  gender!: 'masculin' | 'féminin' | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  lastLogin: Date | null;
+  lastLogin!: Date | null;
 
   @Column({ type: 'varchar', length: 6, nullable: true })
-  resetPasswordOtp: string | null;
+  resetPasswordOtp!: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  resetPasswordOtpExpiresAt: Date | null;
+  resetPasswordOtpExpiresAt!: Date | null;
 
   @Column({ type: 'varchar', length: 10, nullable: true, unique: true })
-  referralCode: string | null;
+  referralCode!: string | null;
 
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'roleId' })
-  role: Role;
+  role!: Role;
 
   @Column('varchar', { length: 36, nullable: true })
-  roleId: string;
+  roleId!: string;
 
   @Column({ default: false })
-  isActive: boolean;
+  isActive!: boolean;
 
   @OneToMany(() => Ad, (ad) => ad.user)
-  ads: Ad[];
+  ads!: Ad[];
 
   @OneToMany(() => Payment, (payment) => payment.user)
-  payments: Payment[];
+  payments!: Payment[];
 
   @OneToMany(() => Request, (request) => request.user)
-  requests: Request[];
+  requests!: Request[];
 
   @OneToMany(() => Response, (response) => response.user)
-  responses: Response[];
+  responses!: Response[];
 
   @OneToMany(() => Favorite, (favorite) => favorite.user)
-  favorites: Favorite[];
+  favorites!: Favorite[];
 
   @OneToOne(() => UserProfile, profile => profile.user, { cascade: true })
-  profile: UserProfile;
+  profile!: UserProfile;
 
   @OneToOne(() => UserVerification, verification => verification.user, { cascade: true })
-  verification: UserVerification;
+  verification!: UserVerification;
 
   @Column({ default: false })
-  isVerified: boolean;
+  isVerified!: boolean;
 
   @Column({ name: 'loyalty_points', default: 0 })
-  loyaltyPoints: number;
+  loyaltyPoints!: number;
 
   @Column({ name: 'accepted_terms', default: false })
-  acceptedTerms: boolean;
+  acceptedTerms!: boolean;
 
   @Column({ name: 'terms_accepted_at', type: 'timestamp', nullable: true })
-  termsAcceptedAt: Date | null;
+  termsAcceptedAt!: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

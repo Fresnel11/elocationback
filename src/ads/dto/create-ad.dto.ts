@@ -11,7 +11,7 @@ export class CreateAdDto {
   @IsString()
   @MinLength(10)
   @MaxLength(100)
-  title: string;
+  title!: string;
 
   @ApiProperty({
     description: 'Description détaillée de l\'annonce',
@@ -22,7 +22,7 @@ export class CreateAdDto {
   @IsString()
   @MinLength(20)
   @MaxLength(1000)
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Prix en FCFA',
@@ -31,7 +31,7 @@ export class CreateAdDto {
   })
   @IsNumber()
   @Min(1000)
-  price: number;
+  price!: number;
 
   @ApiProperty({
     description: 'Localisation de l\'annonce',
@@ -42,7 +42,7 @@ export class CreateAdDto {
   @IsString()
   @MinLength(5)
   @MaxLength(200)
-  location: string;
+  location!: string;
 
   @ApiProperty({
     description: 'Numéro WhatsApp pour contact (format international)',
@@ -52,7 +52,7 @@ export class CreateAdDto {
   @IsString()
   @MinLength(10)
   @MaxLength(15)
-  whatsappNumber: string;
+  whatsappNumber!: string;
 
   @ApiProperty({
     description: 'ID de la catégorie',
@@ -60,7 +60,7 @@ export class CreateAdDto {
   })
   @IsString()
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty({
     description: 'ID de la sous-catégorie',
@@ -117,7 +117,7 @@ export class CreateAdDto {
   })
   @IsArray()
   @IsString({ each: true })
-  photos: string[];
+  photos!: string[];
 
   @ApiProperty({
     description: 'URL de la vidéo',

@@ -7,5 +7,5 @@ export class ForgotPasswordDto {
     example: 'user@example.com'
   })
   @IsEmail()
-  email: string;
+  email!: string;
 }

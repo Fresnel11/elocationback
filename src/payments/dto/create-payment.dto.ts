@@ -12,7 +12,7 @@ export class CreatePaymentDto {
   @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   @Min(100)
-  amount: number;
+  amount!: number;
 
   @ApiProperty({
     description: 'Fournisseur de paiement',
@@ -20,7 +20,7 @@ export class CreatePaymentDto {
     enum: PaymentProvider
   })
   @IsEnum(PaymentProvider)
-  provider: PaymentProvider;
+  provider!: PaymentProvider;
 
   @ApiProperty({
     description: 'Numéro de téléphone pour le paiement Mobile Money',
@@ -28,7 +28,7 @@ export class CreatePaymentDto {
     pattern: '^\\+[1-9]\\d{1,14}$'
   })
   @IsString()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @ApiProperty({
     description: 'Description du paiement',

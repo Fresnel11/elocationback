@@ -8,7 +8,7 @@ export class VerifyPaymentDto {
   })
   @IsString()
   @IsNotEmpty()
-  paymentId: string;
+  paymentId!: string;
 
   @ApiProperty({
     description: 'Code de transaction Mobile Money',
@@ -16,5 +16,5 @@ export class VerifyPaymentDto {
   })
   @IsString()
   @IsNotEmpty()
-  transactionCode: string;
+  transactionCode!: string;
 }

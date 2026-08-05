@@ -18,72 +18,72 @@ export enum TicketPriority {
 @Entity('support_tickets')
 export class SupportTicket {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'ticket_number', unique: true })
-  ticketNumber: string;
+  ticketNumber!: string;
 
   @Column()
-  subject: string;
+  subject!: string;
 
   @Column({ type: 'text' })
-  description: string;
+  description!: string;
 
   @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.OPEN })
-  status: TicketStatus;
+  status!: TicketStatus;
 
   @Column({ type: 'enum', enum: TicketPriority, default: TicketPriority.MEDIUM })
-  priority: TicketPriority;
+  priority!: TicketPriority;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ name: 'assigned_to', nullable: true })
-  assignedTo: string;
+  assignedTo!: string;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'assigned_to' })
-  assignedAgent: User;
+  assignedAgent!: User;
 
   @OneToMany(() => TicketMessage, message => message.ticket)
-  messages: TicketMessage[];
+  messages!: TicketMessage[];
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 @Entity('ticket_messages')
 export class TicketMessage {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'ticket_id' })
-  ticketId: string;
+  ticketId!: string;
 
   @ManyToOne(() => SupportTicket, ticket => ticket.messages)
   @JoinColumn({ name: 'ticket_id' })
-  ticket: SupportTicket;
+  ticket!: SupportTicket;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ type: 'text' })
-  message: string;
+  message!: string;
 
   @Column({ name: 'is_staff', default: false })
-  isStaff: boolean;
+  isStaff!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 }

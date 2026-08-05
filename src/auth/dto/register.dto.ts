@@ -10,7 +10,7 @@ export class RegisterDto {
   })
   @IsString()
   @MinLength(2)
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({
     description: 'Nom de famille de l\'utilisateur',
@@ -20,7 +20,7 @@ export class RegisterDto {
   })
   @IsString()
   @MinLength(2)
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({
     description: 'Numéro de téléphone (format international)',
@@ -33,7 +33,7 @@ export class RegisterDto {
   @Matches(/^\+[1-9]\d{1,14}$/, {
     message: 'Le numéro de téléphone doit être au format international (+22999154678)'
   })
-  phone: string;
+  phone!: string;
 
   @ApiProperty({
     description: 'Email de l\'utilisateur (optionnel)',
@@ -56,7 +56,7 @@ export class RegisterDto {
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
   })
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'Code de parrainage (optionnel)',
@@ -73,7 +73,7 @@ export class RegisterDto {
     example: '1990-01-01'
   })
   @IsDateString()
-  birthDate: string;
+  birthDate!: string;
 
   @ApiProperty({
     description: 'Sexe de l\'utilisateur',
@@ -81,12 +81,12 @@ export class RegisterDto {
     enum: ['masculin', 'féminin']
   })
   @IsEnum(['masculin', 'féminin'])
-  gender: 'masculin' | 'féminin';
+  gender!: 'masculin' | 'féminin';
 
   @ApiProperty({
     description: 'Acceptation des conditions d\'utilisation',
     example: true
   })
   @IsBoolean()
-  acceptedTerms: boolean;
+  acceptedTerms!: boolean;
 }

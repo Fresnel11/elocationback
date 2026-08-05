@@ -5,25 +5,25 @@ import { Ad } from '../../ads/entities/ad.entity';
 @Entity('price_alerts')
 export class PriceAlert {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @ManyToOne(() => Ad, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'adId' })
-  ad: Ad;
+  ad!: Ad;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  previousPrice: number;
+  previousPrice!: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  newPrice: number;
+  newPrice!: number;
 
   @Column({ default: false })
-  isRead: boolean;
+  isRead!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

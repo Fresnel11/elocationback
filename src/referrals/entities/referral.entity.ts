@@ -10,34 +10,34 @@ export enum ReferralStatus {
 @Entity('referrals')
 export class Referral {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'referrer_id' })
-  referrerId: string;
+  referrerId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'referrer_id' })
-  referrer: User;
+  referrer!: User;
 
   @Column({ name: 'referred_id' })
-  referredId: string;
+  referredId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'referred_id' })
-  referred: User;
+  referred!: User;
 
   @Column({ name: 'referral_code' })
-  referralCode: string;
+  referralCode!: string;
 
   @Column({ type: 'enum', enum: ReferralStatus, default: ReferralStatus.PENDING })
-  status: ReferralStatus;
+  status!: ReferralStatus;
 
   @Column({ name: 'reward_amount', type: 'decimal', precision: 10, scale: 2, default: 0 })
-  rewardAmount: number;
+  rewardAmount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

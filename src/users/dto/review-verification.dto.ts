@@ -3,7 +3,7 @@ import { VerificationStatus } from '../entities/user-verification.entity';
 
 export class ReviewVerificationDto {
   @IsEnum(VerificationStatus)
-  status: VerificationStatus;
+  status!: VerificationStatus;
 
   @IsOptional()
   @IsString()

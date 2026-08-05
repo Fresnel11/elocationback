@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsNumber, IsUUID, Min, Max } from 'class-validato
 
 export class CreateSearchAlertDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()

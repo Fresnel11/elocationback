@@ -3,16 +3,16 @@ import { NotificationType } from '../entities/notification.entity';
 
 export class CreateNotificationDto {
   @IsUUID()
-  userId: string;
+  userId!: string;
 
   @IsEnum(NotificationType)
-  type: NotificationType;
+  type!: NotificationType;
 
   @IsString()
-  title: string;
+  title!: string;
 
   @IsString()
-  message: string;
+  message!: string;
 
   @IsOptional()
   data?: any;

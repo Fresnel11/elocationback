@@ -8,7 +8,7 @@ export class LoginDto {
     maxLength: 100
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'Mot de passe de l\'utilisateur',
@@ -16,5 +16,5 @@ export class LoginDto {
     minLength: 6
   })
   @IsString()
-  password: string;
+  password!: string;
 }

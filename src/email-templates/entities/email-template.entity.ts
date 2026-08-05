@@ -13,29 +13,29 @@ export enum EmailTemplateType {
 @Entity('email_templates')
 export class EmailTemplate {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'enum', enum: EmailTemplateType, unique: true })
-  type: EmailTemplateType;
+  type!: EmailTemplateType;
 
   @Column()
-  subject: string;
+  subject!: string;
 
   @Column('text')
-  htmlContent: string;
+  htmlContent!: string;
 
   @Column('text', { nullable: true })
-  textContent: string;
+  textContent!: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column('json', { nullable: true })
-  variables: string[]; // Variables disponibles comme {{userName}}, {{adTitle}}
+  variables!: string[]; // Variables disponibles comme {{userName}}, {{adTitle}}
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

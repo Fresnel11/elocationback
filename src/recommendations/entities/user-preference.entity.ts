@@ -5,19 +5,19 @@ import { User } from '../../users/entities/user.entity';
 @Index(['userId', 'type'])
 export class UserPreference {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
-  user: User;
+  user!: User;
 
   @Column()
-  type: string; // 'view', 'favorite', 'search', 'contact'
+  type!: string; // 'view', 'favorite', 'search', 'contact'
 
   @Column('json')
-  data: {
+  data!: {
     categoryId?: string;
     location?: string;
     priceRange?: [number, number];
@@ -28,8 +28,8 @@ export class UserPreference {
   };
 
   @Column({ default: 1 })
-  weight: number;
+  weight!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

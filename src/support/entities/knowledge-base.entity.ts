@@ -9,65 +9,65 @@ export enum ArticleStatus {
 @Entity('knowledge_base_articles')
 export class KnowledgeBaseArticle {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column({ type: 'text' })
-  content: string;
+  content!: string;
 
   @Column()
-  category: string;
+  category!: string;
 
   @Column({ type: 'simple-array', nullable: true })
-  tags: string[];
+  tags!: string[];
 
   @Column({ type: 'enum', enum: ArticleStatus, default: ArticleStatus.PUBLISHED })
-  status: ArticleStatus;
+  status!: ArticleStatus;
 
   @Column({ name: 'view_count', default: 0 })
-  viewCount: number;
+  viewCount!: number;
 
   @Column({ name: 'helpful_count', default: 0 })
-  helpfulCount: number;
+  helpfulCount!: number;
 
   @Column({ name: 'not_helpful_count', default: 0 })
-  notHelpfulCount: number;
+  notHelpfulCount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 @Entity('faq_items')
 export class FAQItem {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  question: string;
+  question!: string;
 
   @Column({ type: 'text' })
-  answer: string;
+  answer!: string;
 
   @Column()
-  category: string;
+  category!: string;
 
   @Column({ name: 'display_order', default: 0 })
-  displayOrder: number;
+  displayOrder!: number;
 
   @Column({ name: 'is_active', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ name: 'view_count', default: 0 })
-  viewCount: number;
+  viewCount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -10,66 +10,66 @@ export enum ChatStatus {
 @Entity('chat_sessions')
 export class ChatSession {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ name: 'agent_id', nullable: true })
-  agentId: string;
+  agentId!: string;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'agent_id' })
-  agent: User;
+  agent!: User;
 
   @Column({ type: 'enum', enum: ChatStatus, default: ChatStatus.WAITING })
-  status: ChatStatus;
+  status!: ChatStatus;
 
   @Column({ name: 'started_at', nullable: true })
-  startedAt: Date;
+  startedAt!: Date;
 
   @Column({ name: 'ended_at', nullable: true })
-  endedAt: Date;
+  endedAt!: Date;
 
   @OneToMany(() => ChatMessage, message => message.session)
-  messages: ChatMessage[];
+  messages!: ChatMessage[];
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 @Entity('chat_messages')
 export class ChatMessage {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'session_id' })
-  sessionId: string;
+  sessionId!: string;
 
   @ManyToOne(() => ChatSession, session => session.messages)
   @JoinColumn({ name: 'session_id' })
-  session: ChatSession;
+  session!: ChatSession;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ type: 'text' })
-  message: string;
+  message!: string;
 
   @Column({ name: 'is_agent', default: false })
-  isAgent: boolean;
+  isAgent!: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 }

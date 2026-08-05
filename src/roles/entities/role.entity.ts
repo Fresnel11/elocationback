@@ -6,20 +6,20 @@ import { Permission } from '../../permissions/entities/permission.entity';
 @Entity('roles')
 export class Role {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     type: 'varchar',
     length: 50,
     unique: true,
   })
-  name: UserRole;
+  name!: UserRole;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @OneToMany(() => User, (user) => user.role)
-  users: User[];
+  users!: User[];
 
   @ManyToMany(() => Permission, permission => permission.roles)
   @JoinTable({
@@ -27,11 +27,11 @@ export class Role {
     joinColumn: { name: 'roleId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'permissionId', referencedColumnName: 'id' }
   })
-  permissions: Permission[];
+  permissions!: Permission[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

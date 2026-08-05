@@ -5,44 +5,44 @@ import { Ad } from '../../ads/entities/ad.entity';
 @Entity('messages')
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column('text')
-  content: string;
+  content!: string;
 
   @Column({ default: false })
-  isEncrypted: boolean;
+  isEncrypted!: boolean;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
-  imageUrl: string | null;
+  imageUrl!: string | null;
 
   @Column({ type: 'varchar', length: 10, default: 'text' })
-  messageType: 'text' | 'image';
+  messageType!: 'text' | 'image';
 
   @Column({ default: false })
-  isRead: boolean;
+  isRead!: boolean;
 
   @ManyToOne(() => User)
-  sender: User;
+  sender!: User;
 
   @Column()
-  senderId: string;
+  senderId!: string;
 
   @ManyToOne(() => User)
-  receiver: User;
+  receiver!: User;
 
   @Column()
-  receiverId: string;
+  receiverId!: string;
 
   @ManyToOne(() => Ad, { nullable: true })
-  ad: Ad | null;
+  ad!: Ad | null;
 
   @Column({ nullable: true })
-  adId: string | null;
+  adId!: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

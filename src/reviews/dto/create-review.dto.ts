@@ -4,13 +4,13 @@ export class CreateReviewDto {
   @IsInt()
   @Min(1)
   @Max(5)
-  rating: number;
+  rating!: number;
 
   @IsString()
   @IsNotEmpty()
-  comment: string;
+  comment!: string;
 
   @IsString()
   @IsNotEmpty()
-  adId: string;
+  adId!: string;
 }

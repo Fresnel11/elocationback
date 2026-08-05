@@ -5,17 +5,17 @@ export class CreateBookingDto {
   @ApiProperty({ description: 'ID de l\'annonce' })
   @IsNotEmpty()
   @IsString()
-  adId: string;
+  adId!: string;
 
   @ApiProperty({ description: 'Date de début de la réservation', example: '2024-01-15' })
   @IsNotEmpty()
   @IsDateString()
-  startDate: string;
+  startDate!: string;
 
   @ApiProperty({ description: 'Date de fin de la réservation', example: '2024-01-20' })
   @IsNotEmpty()
   @IsDateString()
-  endDate: string;
+  endDate!: string;
 
   @ApiProperty({ description: 'Message pour le propriétaire', required: false })
   @IsOptional()

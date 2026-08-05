@@ -10,29 +10,29 @@ export enum VerificationStatus {
 @Entity('user_profiles')
 export class UserProfile {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @OneToOne(() => User, user => user.profile)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @Column({ nullable: true })
-  avatar: string;
+  avatar!: string;
 
   @Column({ nullable: true })
-  bio: string;
+  bio!: string;
 
   @Column({ nullable: true })
-  phone: string;
+  phone!: string;
 
   @Column({ nullable: true })
-  address: string;
+  address!: string;
 
   @Column({ nullable: true, name: 'identity_document' })
-  identityDocument: string;
+  identityDocument!: string;
 
   @Column({ 
     type: 'enum', 
@@ -40,20 +40,20 @@ export class UserProfile {
     default: VerificationStatus.PENDING,
     name: 'verification_status'
   })
-  verificationStatus: VerificationStatus;
+  verificationStatus!: VerificationStatus;
 
   @Column('simple-array', { nullable: true })
-  badges: string[];
+  badges!: string[];
 
   @Column({ type: 'int', default: 0, name: 'total_bookings' })
-  totalBookings: number;
+  totalBookings!: number;
 
   @Column({ type: 'decimal', precision: 3, scale: 2, default: 0, name: 'average_rating' })
-  averageRating: number;
+  averageRating!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

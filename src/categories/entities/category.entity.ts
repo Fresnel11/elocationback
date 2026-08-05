@@ -6,29 +6,29 @@ import { Request } from '../../requests/entities/request.entity';
 @Entity('categories')
 export class Category {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true, length: 100, nullable: false })
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @OneToMany(() => Ad, (ad) => ad.category)
-  ads: Ad[];
+  ads!: Ad[];
 
   @OneToMany(() => SubCategory, (subCategory) => subCategory.category)
-  subCategories: SubCategory[];
+  subCategories!: SubCategory[];
 
   @OneToMany(() => Request, (request) => request.category)
-  requests: Request[];
+  requests!: Request[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

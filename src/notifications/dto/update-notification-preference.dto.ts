@@ -3,11 +3,11 @@ import { NotificationType } from '../entities/notification-preference.entity';
 
 export class UpdateNotificationPreferenceDto {
   @IsEnum(NotificationType)
-  type: NotificationType;
+  type!: NotificationType;
 
   @IsBoolean()
-  emailEnabled: boolean;
+  emailEnabled!: boolean;
 
   @IsBoolean()
-  pushEnabled: boolean;
+  pushEnabled!: boolean;
 }

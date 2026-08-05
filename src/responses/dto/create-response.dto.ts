@@ -4,7 +4,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateResponseDto {
   @ApiProperty({ description: 'Message de réponse' })
   @IsString()
-  message: string;
+  message!: string;
 
   @ApiPropertyOptional({ description: 'Prix proposé' })
   @IsOptional()
@@ -13,7 +13,7 @@ export class CreateResponseDto {
 
   @ApiProperty({ description: 'Téléphone de contact' })
   @IsString()
-  contactPhone: string;
+  contactPhone!: string;
 
   @ApiPropertyOptional({ description: 'Email de contact' })
   @IsOptional()

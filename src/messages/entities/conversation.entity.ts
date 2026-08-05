@@ -5,41 +5,41 @@ import { Ad } from '../../ads/entities/ad.entity';
 @Entity('conversations')
 export class Conversation {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User)
-  user1: User;
+  user1!: User;
 
   @Column()
-  user1Id: string;
+  user1Id!: string;
 
   @ManyToOne(() => User)
-  user2: User;
+  user2!: User;
 
   @Column()
-  user2Id: string;
+  user2Id!: string;
 
   @ManyToOne(() => Ad, { nullable: true })
-  ad: Ad | null;
+  ad!: Ad | null;
 
   @Column({ nullable: true })
-  adId: string | null;
+  adId!: string | null;
 
   @Column({ nullable: true })
-  lastMessageContent: string;
+  lastMessageContent!: string;
 
   @Column({ nullable: true })
-  lastMessageAt: Date;
+  lastMessageAt!: Date;
 
   @Column({ default: 0 })
-  unreadCountUser1: number;
+  unreadCountUser1!: number;
 
   @Column({ default: 0 })
-  unreadCountUser2: number;
+  unreadCountUser2!: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

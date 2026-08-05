@@ -3,26 +3,26 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 @Entity('system_settings')
 export class SystemSetting {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  key: string;
+  key!: string;
 
   @Column('text')
-  value: string;
+  value!: string;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ default: 'string' })
-  type: string; // string, number, boolean, json
+  type!: string; // string, number, boolean, json
 
   @Column({ default: false })
-  isPublic: boolean; // Si visible côté client
+  isPublic!: boolean; // Si visible côté client
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

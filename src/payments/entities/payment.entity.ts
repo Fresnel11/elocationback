@@ -14,46 +14,46 @@ import { PaymentProvider } from '../../common/enums/payment-provider.enum';
 @Entity('payments')
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({
     type: 'enum',
     enum: PaymentProvider,
   })
-  provider: PaymentProvider;
+  provider!: PaymentProvider;
 
   @Column({
     type: 'enum',
     enum: PaymentStatus,
     default: PaymentStatus.PENDING,
   })
-  status: PaymentStatus;
+  status!: PaymentStatus;
 
   @Column()
-  phoneNumber: string;
+  phoneNumber!: string;
 
   @Column({ nullable: true })
-  transactionId: string;
+  transactionId!: string;
 
   @Column({ nullable: true })
-  externalTransactionId: string;
+  externalTransactionId!: string;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @ManyToOne(() => User, (user) => user.payments)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -11,7 +11,7 @@ export class CreateRequestDto {
   @IsString()
   @MinLength(10)
   @MaxLength(100)
-  title: string;
+  title!: string;
 
   @ApiProperty({
     description: 'Description détaillée de la demande',
@@ -22,7 +22,7 @@ export class CreateRequestDto {
   @IsString()
   @MinLength(20)
   @MaxLength(1000)
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Localisation souhaitée',
@@ -31,7 +31,7 @@ export class CreateRequestDto {
   })
   @IsString()
   @MaxLength(100)
-  location: string;
+  location!: string;
 
   @ApiProperty({
     description: 'Budget maximum en FCFA',
@@ -75,7 +75,7 @@ export class CreateRequestDto {
   })
   @IsString()
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty({
     description: 'Équipements/options souhaités',

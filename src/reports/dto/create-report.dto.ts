@@ -3,10 +3,10 @@ import { ReportType, ReportReason } from '../entities/report.entity';
 
 export class CreateReportDto {
   @IsEnum(ReportType)
-  type: ReportType;
+  type!: ReportType;
 
   @IsEnum(ReportReason)
-  reason: ReportReason;
+  reason!: ReportReason;
 
   @IsOptional()
   @IsString()
