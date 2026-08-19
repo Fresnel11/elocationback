@@ -9,7 +9,7 @@ import { ABTestingService } from './ab-testing.service';
 @ApiTags('A/B Testing (Admin)')
 @Controller('admin/ab-testing')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
+@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
 @ApiBearerAuth('JWT-auth')
 export class ABTestingController {
   constructor(private readonly abTestingService: ABTestingService) {}

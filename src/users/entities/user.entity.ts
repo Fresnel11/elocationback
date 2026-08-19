@@ -7,6 +7,7 @@ import { Request } from '../../requests/entities/request.entity';
 import { Response } from '../../responses/entities/response.entity';
 import { Permission } from '../../permissions/entities/permission.entity';
 import { Favorite } from '../../favorites/entities/favorite.entity';
+import { Category } from '../../categories/entities/category.entity';
 import { UserProfile } from './user-profile.entity';
 import { UserVerification } from './user-verification.entity';
 
@@ -103,6 +104,15 @@ export class User {
 
   @Column({ name: 'terms_accepted_at', type: 'timestamp', nullable: true })
   termsAcceptedAt!: Date | null;
+
+  /** Catégories déléguées à un utilisateur `category_manager` — vide/absent pour les autres rôles. */
+  @ManyToMany(() => Category)
+  @JoinTable({
+    name: 'user_managed_categories',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' },
+  })
+  managedCategories!: Category[];
 
   @CreateDateColumn()
   createdAt!: Date;

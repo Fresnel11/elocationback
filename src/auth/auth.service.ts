@@ -57,6 +57,7 @@ export class AuthService {
         phone: user.phone,
         role: user.role,
         profilePicture: user.profile?.avatar || user.profilePicture,
+        managedCategoryIds: user.managedCategories?.map((c) => c.id) || [],
       },
     };
   }
@@ -91,6 +92,7 @@ export class AuthService {
         phone: user.phone,
         role: user.role,
         profilePicture: user.profile?.avatar || user.profilePicture,
+        managedCategoryIds: user.managedCategories?.map((c) => c.id) || [],
       },
     };
   }
@@ -123,6 +125,7 @@ export class AuthService {
         phone: user.phone,
         role: user.role,
         profilePicture: user.profile?.avatar || user.profilePicture,
+        managedCategoryIds: user.managedCategories?.map((c) => c.id) || [],
       },
     };
   }

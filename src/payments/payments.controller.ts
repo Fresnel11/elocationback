@@ -109,7 +109,7 @@ export class PaymentsController {
 
   @Get('all')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Récupérer tous les paiements',
@@ -132,7 +132,7 @@ export class PaymentsController {
 
   @Get('real-estate-access/:userId')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Vérifier l\'accès immobilier d\'un utilisateur',

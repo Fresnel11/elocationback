@@ -17,8 +17,9 @@ export class AdminController {
   ) {}
 
   @Get('dashboard')
-  async getDashboardStats() {
-    return this.adminService.getDashboardStats();
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async getDashboardStats(@Request() req) {
+    return this.adminService.getDashboardStats(req.user);
   }
 
   @Get('users/stats')
@@ -74,23 +75,27 @@ export class AdminController {
 
   // Gestion des annonces
   @Get('ads')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
   async getAllAds(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('search') search?: string,
     @Query('status') status?: string,
     @Query('category') category?: string,
+    @Request() req?,
   ) {
-    return this.adminService.getAllAds(page, limit, search, status, category);
+    return this.adminService.getAllAds(page, limit, search, status, category, req?.user);
   }
 
   @Put('ads/:id/status')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
   async updateAdStatus(
     @Param('id') id: string,
     @Body('status') status: string,
-    @Body('reason') reason?: string,
+    @Body('reason') reason: string,
+    @Request() req,
   ) {
-    return this.adminService.updateAdStatus(id, status, reason);
+    return this.adminService.updateAdStatus(id, status, reason, req.user);
   }
 
   @Delete('ads/:id')
@@ -102,22 +107,26 @@ export class AdminController {
 
   // Gestion des réservations
   @Get('bookings')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
   async getAllBookings(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('status') status?: string,
     @Query('search') search?: string,
+    @Request() req?,
   ) {
-    return this.adminService.getAllBookings(page, limit, status, search);
+    return this.adminService.getAllBookings(page, limit, status, search, req?.user);
   }
 
   @Put('bookings/:id/status')
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
   async updateBookingStatus(
     @Param('id') id: string,
     @Body('status') status: string,
-    @Body('reason') reason?: string,
+    @Body('reason') reason: string,
+    @Request() req,
   ) {
-    return this.adminService.updateBookingStatus(id, status, reason);
+    return this.adminService.updateBookingStatus(id, status, reason, req.user);
   }
 
   // Gestion des paramètres
@@ -226,18 +235,21 @@ export class AdminController {
   }
 
   @Post('subcategories')
-  async createSubCategory(@Body() subCategoryData: any) {
-    return this.adminService.createSubCategory(subCategoryData);
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async createSubCategory(@Body() subCategoryData: any, @Request() req) {
+    return this.adminService.createSubCategory(subCategoryData, req.user);
   }
 
   @Put('subcategories/:id')
-  async updateSubCategory(@Param('id') id: string, @Body() subCategoryData: any) {
-    return this.adminService.updateSubCategory(id, subCategoryData);
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async updateSubCategory(@Param('id') id: string, @Body() subCategoryData: any, @Request() req) {
+    return this.adminService.updateSubCategory(id, subCategoryData, req.user);
   }
 
   @Delete('subcategories/:id')
-  async deleteSubCategory(@Param('id') id: string) {
-    await this.adminService.deleteSubCategory(id);
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async deleteSubCategory(@Param('id') id: string, @Request() req) {
+    await this.adminService.deleteSubCategory(id, req.user);
     return { message: 'Sous-catégorie supprimée avec succès' };
   }
 
@@ -250,19 +262,38 @@ export class AdminController {
     return this.adminService.updateRolePermissions(roleId, permissionIds);
   }
 
+  // Gestion des délégations category_manager (super_admin uniquement)
+  @Get('category-managers')
+  @Roles(UserRole.SUPER_ADMIN)
+  async getCategoryManagers() {
+    return this.adminService.getCategoryManagers();
+  }
+
+  @Put('category-managers/:userId/categories')
+  @Roles(UserRole.SUPER_ADMIN)
+  async updateCategoryManagerCategories(
+    @Param('userId') userId: string,
+    @Body('categoryIds') categoryIds: string[],
+  ) {
+    return this.adminService.updateCategoryManagerCategories(userId, categoryIds || []);
+  }
+
   @Get('reviews/pending')
-  async getPendingReviews() {
-    return this.adminService.getPendingReviews();
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async getPendingReviews(@Request() req) {
+    return this.adminService.getPendingReviews(req.user);
   }
 
   @Post('reviews/:id/approve')
-  async approveReview(@Param('id') id: string) {
-    return this.adminService.approveReview(id);
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async approveReview(@Param('id') id: string, @Request() req) {
+    return this.adminService.approveReview(id, req.user);
   }
 
   @Post('reviews/:id/reject')
-  async rejectReview(@Param('id') id: string) {
-    return this.adminService.rejectReview(id);
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CATEGORY_MANAGER)
+  async rejectReview(@Param('id') id: string, @Request() req) {
+    return this.adminService.rejectReview(id, req.user);
   }
 
   @Get('reports')

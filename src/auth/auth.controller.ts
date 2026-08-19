@@ -149,7 +149,8 @@ export class AuthController {
       role: user.role,
       profilePicture: user.profile?.avatar || user.profilePicture,
       isActive: user.isActive,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      managedCategoryIds: user.managedCategories?.map((c) => c.id) || [],
     };
   }
 

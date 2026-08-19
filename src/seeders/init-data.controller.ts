@@ -1,9 +1,19 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { SeederService } from './seeder.service';
 import { UpdateCoordinatesSeeder } from './update-coordinates.seeder';
 import { AdSeeder } from './ad.seeder';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
 
+// `base-data`/`all-data` déclenchent CategorySeeder.seed(), qui supprime reviews/favorites/
+// ads/subcategories/categories avant de reseeder. Ce contrôleur était entièrement public
+// (aucun guard) : n'importe qui pouvait vider la base de production en un POST anonyme.
+// Réservé à super_admin.
 @Controller('init')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.SUPER_ADMIN)
 export class InitDataController {
   constructor(
     private readonly seederService: SeederService,

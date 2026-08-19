@@ -95,7 +95,7 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['ads', 'payments', 'profile'],
+      relations: ['ads', 'payments', 'profile', 'role', 'managedCategories'],
     });
 
     if (!user) {
@@ -109,7 +109,7 @@ export class UsersService {
     if (!email) return null;
     return this.userRepository.findOne({
       where: { email: email.toLowerCase() },
-      relations: ['role', 'profile'],
+      relations: ['role', 'profile', 'managedCategories'],
     });
   }
 
@@ -194,6 +194,23 @@ export class UsersService {
     });
 
     return this.userRepository.save(user);
+  }
+
+  /** Changement de mot de passe self-service (Paramètres → Sécurité) : exige l'ancien mot de passe, contrairement à `resetPassword` (flux OTP, l'identité est déjà prouvée par le code reçu). */
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.password) {
+      throw new BadRequestException('Ce compte n\'a pas de mot de passe (connexion Google) — impossible de le changer ici');
+    }
+
+    const isCurrentValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentValid) {
+      throw new BadRequestException('Mot de passe actuel incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.update({ id: userId }, { password: hashedPassword });
   }
 
   async verifyOtpForPasswordReset(email: string, code: string): Promise<boolean> {

@@ -25,6 +25,10 @@ export class RoleSeeder {
         name: UserRole.USER,
         description: 'Utilisateur standard',
       },
+      {
+        name: UserRole.CATEGORY_MANAGER,
+        description: 'Accès admin délégué, restreint à ses catégories assignées',
+      },
     ];
 
     for (const roleData of roles) {

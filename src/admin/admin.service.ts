@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Ad } from '../ads/entities/ad.entity';
 import { Booking, BookingStatus } from '../bookings/entities/booking.entity';
@@ -50,7 +50,45 @@ export class AdminService {
     private ticketMessageRepository: Repository<TicketMessage>,
   ) {}
 
-  async getDashboardStats() {
+  // ---- Scoping "category_manager" : accès délégué restreint à des catégories ----
+  // Un category_manager ne doit voir/agir que sur les annonces, réservations,
+  // sous-catégories et avis rattachés à ses `managedCategories`. Les autres rôles
+  // (admin, super_admin) ne sont pas concernés par ces helpers.
+
+  private isCategoryManager(user: any): boolean {
+    return user?.role?.name === UserRole.CATEGORY_MANAGER;
+  }
+
+  private getManagedCategoryIds(user: any): string[] {
+    return (user?.managedCategories || []).map((c: any) => c.id);
+  }
+
+  /** Lève un 403 si `categoryId` n'est pas dans le périmètre du category_manager courant. */
+  private assertCategoryAccess(user: any, categoryId: string | null | undefined) {
+    if (!this.isCategoryManager(user)) {
+      return;
+    }
+    const managedIds = this.getManagedCategoryIds(user);
+    if (!categoryId || !managedIds.includes(categoryId)) {
+      throw new ForbiddenException('Cette catégorie ne fait pas partie de votre périmètre');
+    }
+  }
+
+  // Surcharge : sans utilisateur (appel interne, ex. createBackup), on reste sur le type complet
+  // pour ne pas forcer tous les appelants existants à gérer l'union avec la variante scopée.
+  async getDashboardStats(): Promise<{
+    totalUsers: number; totalAds: number; totalBookings: number;
+    activeUsers: number; inactiveAds: number; recentUsers: User[];
+  }>;
+  async getDashboardStats(user: any): Promise<
+    | { totalAds: number; totalBookings: number; inactiveAds: number; managedCategoryIds: string[] }
+    | { totalUsers: number; totalAds: number; totalBookings: number; activeUsers: number; inactiveAds: number; recentUsers: User[] }
+  >;
+  async getDashboardStats(user?: any) {
+    if (this.isCategoryManager(user)) {
+      return this.getDashboardStatsForCategoryManager(this.getManagedCategoryIds(user));
+    }
+
     const [
       totalUsers,
       totalAds,
@@ -79,6 +117,25 @@ export class AdminService {
       inactiveAds: pendingAds,
       recentUsers,
     };
+  }
+
+  /** Dashboard restreint : aucune donnée utilisateur, uniquement les annonces/réservations des catégories gérées. */
+  private async getDashboardStatsForCategoryManager(managedCategoryIds: string[]) {
+    if (managedCategoryIds.length === 0) {
+      return { totalAds: 0, totalBookings: 0, inactiveAds: 0, managedCategoryIds: [] };
+    }
+
+    const [totalAds, inactiveAds, totalBookings] = await Promise.all([
+      this.adRepository.count({ where: { categoryId: In(managedCategoryIds) } }),
+      this.adRepository.count({ where: { categoryId: In(managedCategoryIds), isActive: false } }),
+      this.bookingRepository
+        .createQueryBuilder('booking')
+        .innerJoin('booking.ad', 'ad')
+        .where('ad.categoryId IN (:...managedCategoryIds)', { managedCategoryIds })
+        .getCount(),
+    ]);
+
+    return { totalAds, totalBookings, inactiveAds, managedCategoryIds };
   }
 
   async getUsersStats() {
@@ -202,7 +259,7 @@ export class AdminService {
   }
 
   // Gestion des annonces
-  async getAllAds(page = 1, limit = 20, search?: string, status?: string, category?: string) {
+  async getAllAds(page = 1, limit = 20, search?: string, status?: string, category?: string, user?: any) {
     const query = this.adRepository.createQueryBuilder('ad')
       .leftJoinAndSelect('ad.user', 'user')
       .leftJoinAndSelect('ad.category', 'category')
@@ -225,6 +282,13 @@ export class AdminService {
       query.andWhere('category.id = :category', { category });
     }
 
+    if (this.isCategoryManager(user)) {
+      const managedCategoryIds = this.getManagedCategoryIds(user);
+      query.andWhere('ad.categoryId IN (:...managedCategoryIds)', {
+        managedCategoryIds: managedCategoryIds.length > 0 ? managedCategoryIds : [''],
+      });
+    }
+
     const [ads, total] = await query
       .skip((page - 1) * limit)
       .take(limit)
@@ -239,10 +303,15 @@ export class AdminService {
     };
   }
 
-  async updateAdStatus(adId: string, status: string, reason?: string) {
+  async updateAdStatus(adId: string, status: string, reason?: string, user?: any) {
+    if (this.isCategoryManager(user)) {
+      const ad = await this.adRepository.findOne({ where: { id: adId } });
+      this.assertCategoryAccess(user, ad?.categoryId);
+    }
+
     const isActive = status === 'active';
     await this.adRepository.update(adId, { isActive });
-    return this.adRepository.findOne({ 
+    return this.adRepository.findOne({
       where: { id: adId },
       relations: ['user', 'category']
     });
@@ -262,7 +331,7 @@ export class AdminService {
   }
 
   // Gestion des réservations
-  async getAllBookings(page = 1, limit = 20, status?: string, search?: string) {
+  async getAllBookings(page = 1, limit = 20, status?: string, search?: string, user?: any) {
     const query = this.bookingRepository.createQueryBuilder('booking')
       .leftJoinAndSelect('booking.ad', 'ad')
       .leftJoinAndSelect('booking.tenant', 'tenant')
@@ -280,6 +349,13 @@ export class AdminService {
       );
     }
 
+    if (this.isCategoryManager(user)) {
+      const managedCategoryIds = this.getManagedCategoryIds(user);
+      query.andWhere('ad.categoryId IN (:...managedCategoryIds)', {
+        managedCategoryIds: managedCategoryIds.length > 0 ? managedCategoryIds : [''],
+      });
+    }
+
     const [bookings, total] = await query
       .skip((page - 1) * limit)
       .take(limit)
@@ -294,13 +370,18 @@ export class AdminService {
     };
   }
 
-  async updateBookingStatus(bookingId: string, status: string, reason?: string) {
+  async updateBookingStatus(bookingId: string, status: string, reason?: string, user?: any) {
+    if (this.isCategoryManager(user)) {
+      const booking = await this.bookingRepository.findOne({ where: { id: bookingId }, relations: ['ad'] });
+      this.assertCategoryAccess(user, booking?.ad?.categoryId);
+    }
+
     const bookingStatus = status as BookingStatus;
     const updateData: any = { status: bookingStatus };
     if (reason) {
       updateData.cancellationReason = reason;
     }
-    
+
     await this.bookingRepository.update(bookingId, updateData);
     return this.bookingRepository.findOne({ 
       where: { id: bookingId },
@@ -496,6 +577,10 @@ export class AdminService {
       password: hashedPassword,
       role: userRole,
       isActive: true, // Activé par défaut pour les utilisateurs créés par admin
+      // Un compte créé directement par un admin est déjà vouché par lui : on ne lui
+      // impose pas le parcours de vérification d'identité (sinon AdsService.create()
+      // bloque toute publication d'annonce tant que isVerified === false).
+      isVerified: true,
     });
 
     return this.userRepository.save(user);
@@ -562,6 +647,35 @@ export class AdminService {
     return this.roleRepository.save(role);
   }
 
+  // Gestion des délégations category_manager (super_admin uniquement)
+  async getCategoryManagers() {
+    return this.userRepository.find({
+      where: { role: { name: UserRole.CATEGORY_MANAGER } },
+      relations: ['role', 'managedCategories'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async updateCategoryManagerCategories(userId: string, categoryIds: string[]) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['role', 'managedCategories'],
+    });
+    if (!user) {
+      throw new Error('Utilisateur non trouvé');
+    }
+    if (user.role?.name !== UserRole.CATEGORY_MANAGER) {
+      throw new ForbiddenException('Cet utilisateur n\'a pas le rôle category_manager');
+    }
+
+    const categories = categoryIds.length > 0
+      ? await this.categoryRepository.find({ where: { id: In(categoryIds) } })
+      : [];
+    user.managedCategories = categories;
+    await this.userRepository.save(user);
+    return user;
+  }
+
   // Gestion des catégories
   async createCategory(categoryData: any) {
     const category = this.categoryRepository.create(categoryData);
@@ -581,17 +695,26 @@ export class AdminService {
     await this.categoryRepository.delete(categoryId);
   }
 
-  async createSubCategory(subCategoryData: any) {
+  async createSubCategory(subCategoryData: any, user?: any) {
+    this.assertCategoryAccess(user, subCategoryData?.categoryId);
     const subCategory = this.subCategoryRepository.create(subCategoryData);
     return this.subCategoryRepository.save(subCategory);
   }
 
-  async updateSubCategory(subCategoryId: string, subCategoryData: any) {
+  async updateSubCategory(subCategoryId: string, subCategoryData: any, user?: any) {
+    if (this.isCategoryManager(user)) {
+      const existing = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+      this.assertCategoryAccess(user, existing?.categoryId);
+    }
     await this.subCategoryRepository.update(subCategoryId, subCategoryData);
     return this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
   }
 
-  async deleteSubCategory(subCategoryId: string) {
+  async deleteSubCategory(subCategoryId: string, user?: any) {
+    if (this.isCategoryManager(user)) {
+      const existing = await this.subCategoryRepository.findOne({ where: { id: subCategoryId } });
+      this.assertCategoryAccess(user, existing?.categoryId);
+    }
     const adsCount = await this.adRepository.count({ where: { subCategory: { id: subCategoryId } } });
     if (adsCount > 0) {
       throw new Error('Impossible de supprimer une sous-catégorie avec des annonces');
@@ -600,9 +723,15 @@ export class AdminService {
   }
 
   // Gestion des reviews
-  async getPendingReviews() {
+  async getPendingReviews(user?: any) {
+    const where: any = { status: ReviewStatus.PENDING };
+    if (this.isCategoryManager(user)) {
+      const managedCategoryIds = this.getManagedCategoryIds(user);
+      where.ad = { categoryId: In(managedCategoryIds.length > 0 ? managedCategoryIds : ['']) };
+    }
+
     return this.reviewRepository.find({
-      where: { status: ReviewStatus.PENDING },
+      where,
       relations: ['user', 'ad'],
       select: {
         id: true,
@@ -624,22 +753,24 @@ export class AdminService {
     });
   }
 
-  async approveReview(reviewId: string) {
-    const review = await this.reviewRepository.findOne({ where: { id: reviewId } });
+  async approveReview(reviewId: string, user?: any) {
+    const review = await this.reviewRepository.findOne({ where: { id: reviewId }, relations: ['ad'] });
     if (!review) {
       throw new Error('Avis non trouvé');
     }
-    
+    this.assertCategoryAccess(user, review.ad?.categoryId);
+
     review.status = ReviewStatus.APPROVED;
     return this.reviewRepository.save(review);
   }
 
-  async rejectReview(reviewId: string) {
-    const review = await this.reviewRepository.findOne({ where: { id: reviewId } });
+  async rejectReview(reviewId: string, user?: any) {
+    const review = await this.reviewRepository.findOne({ where: { id: reviewId }, relations: ['ad'] });
     if (!review) {
       throw new Error('Avis non trouvé');
     }
-    
+    this.assertCategoryAccess(user, review.ad?.categoryId);
+
     review.status = ReviewStatus.REJECTED;
     return this.reviewRepository.save(review);
   }

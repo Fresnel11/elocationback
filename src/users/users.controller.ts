@@ -49,7 +49,7 @@ export class UsersController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Créer un nouvel utilisateur',
@@ -77,7 +77,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Récupérer tous les utilisateurs',
@@ -133,6 +133,31 @@ export class UsersController {
       ...user.profile,
       phone: user.phone // Inclure le téléphone de l'utilisateur
     };
+  }
+
+  // Déclarées avant `@Patch(':id')`/`@Delete(':id')` plus bas : sur un segment unique,
+  // ':id' matcherait "password"/"account" en premier si ces routes littérales venaient après
+  // (c'est exactement le bug qui rendait /users/password et /users/account inopérants).
+  @Patch('password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Changer son mot de passe (nécessite le mot de passe actuel)' })
+  async changePassword(
+    @Request() req,
+    @Body('currentPassword') currentPassword: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    await this.usersService.changePassword(req.user.id, currentPassword, newPassword);
+    return { message: 'Mot de passe mis à jour avec succès' };
+  }
+
+  @Delete('account')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Supprimer son propre compte' })
+  async deleteOwnAccount(@Request() req) {
+    await this.usersService.remove(req.user.id);
+    return { message: 'Compte supprimé avec succès' };
   }
 
   @Patch('public-key')
@@ -221,7 +246,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Supprimer un utilisateur',
@@ -246,7 +271,7 @@ export class UsersController {
 
   @Patch(':id/toggle-status')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ 
     summary: 'Basculer le statut d\'un utilisateur',
