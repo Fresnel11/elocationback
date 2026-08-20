@@ -53,6 +53,12 @@ import { DemarcheursModule } from './demarcheurs/demarcheurs.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV === 'development',
+      // En dehors du dev local (donc en prod), les migrations s'appliquent seules au
+      // démarrage — jusqu'ici chaque nouvelle colonne/table de fonctionnalité restait
+      // en attente d'un ALTER/CREATE TABLE manuel sur Railway, oublié à plusieurs
+      // reprises (ownerName, demarcheur_profiles, user_managed_categories).
+      migrationsRun: process.env.NODE_ENV !== 'development',
+      migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
