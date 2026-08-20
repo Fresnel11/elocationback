@@ -17,7 +17,10 @@ export class UploadService {
 
   async uploadFile(file: any, type: 'photo' | 'video'): Promise<string> {
     // Validation de la taille
-    const maxSize = type === 'photo' ? 2 * 1024 * 1024 : 10 * 1024 * 1024; // 2MB pour photo, 10MB pour vidéo
+    // 2MB rejetait la plupart des photos de téléphone réelles (souvent 3-8MB en
+    // haute résolution) sans que l'UI de création d'annonce ne prévienne ni ne
+    // compresse en amont — remonté en 5MB, cohérent avec la limite Multer de 10MB.
+    const maxSize = type === 'photo' ? 5 * 1024 * 1024 : 10 * 1024 * 1024; // 5MB pour photo, 10MB pour vidéo
     if (file.size > maxSize) {
       throw new BadRequestException(
         `Le fichier est trop volumineux. Taille maximale: ${type === 'photo' ? '2MB' : '10MB'}`
@@ -48,8 +51,8 @@ export class UploadService {
   }
 
   async uploadMultipleFiles(files: any[]): Promise<{ photos: string[], video?: string }> {
-    if (files.length > 5) {
-      throw new BadRequestException('Maximum 5 fichiers autorisés');
+    if (files.length > 6) {
+      throw new BadRequestException('Maximum 6 fichiers autorisés');
     }
 
     const photos: string[] = [];
@@ -70,8 +73,8 @@ export class UploadService {
         if (video && photos.length >= 4) {
           throw new BadRequestException('Maximum 4 photos avec une vidéo');
         }
-        if (!video && photos.length >= 5) {
-          throw new BadRequestException('Maximum 5 photos sans vidéo');
+        if (!video && photos.length >= 6) {
+          throw new BadRequestException('Maximum 6 photos sans vidéo');
         }
         const photoUrl = await this.uploadFile(file, 'photo');
         photos.push(photoUrl);

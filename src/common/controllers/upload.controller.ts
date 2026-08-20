@@ -32,7 +32,10 @@ export class UploadController {
     },
   })
   @UseInterceptors(
-    FilesInterceptor('files', 5, {
+    // 6, pas 5 : CreateAdPage.tsx annonce "6 photos maximum" et en envoie jusqu'à 6 en
+    // un seul appel — au-delà de 5, Multer rejetait la requête avant même qu'elle
+    // n'atteigne le contrôleur, et l'échec remontait sans message exploitable côté UI.
+    FilesInterceptor('files', 6, {
       limits: {
         fileSize: 10 * 1024 * 1024, // 10MB max
       },
