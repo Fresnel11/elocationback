@@ -22,6 +22,16 @@ export class AuthService {
       throw new BadRequestException('Email or phone is required');
     }
 
+    // Le formulaire bloque déjà ces deux cas côté client, mais RegisterDto ne les
+    // rendait pas obligatoires côté serveur — un appel direct à l'API pouvait créer
+    // un compte sans accepter les CGU ou en dessous de l'âge minimum.
+    if (!registerDto.acceptedTerms) {
+      throw new BadRequestException("Vous devez accepter les conditions d'utilisation");
+    }
+    if (this.calculateAge(registerDto.birthDate) < 18) {
+      throw new BadRequestException('Vous devez avoir au moins 18 ans pour créer un compte');
+    }
+
     if (registerDto.email) {
       const existingUser = await this.usersService.findByEmail(registerDto.email);
       if (existingUser) {
@@ -186,5 +196,16 @@ export class AuthService {
 
   async getUserWithProfile(userId: string) {
     return this.usersService.findOne(userId);
+  }
+
+  private calculateAge(birthDate: string): number {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
   }
 }

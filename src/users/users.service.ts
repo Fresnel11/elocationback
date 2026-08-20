@@ -56,6 +56,7 @@ export class UsersService {
     }
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const acceptedTerms = !!createUserDto.acceptedTerms;
     const user = this.userRepository.create({
       email: createUserDto.email ? createUserDto.email.toLowerCase() : null,
       firstName: createUserDto.firstName,
@@ -64,6 +65,12 @@ export class UsersService {
       password: hashedPassword,
       profilePicture: createUserDto.profilePicture ?? null,
       birthDate: createUserDto.birthDate ? new Date(createUserDto.birthDate) : null,
+      // Manquaient tous les deux à l'enregistrement : gender restait toujours null
+      // en base malgré la saisie obligatoire au formulaire, et l'acceptation des
+      // CGU n'était jamais tracée (ni son horodatage).
+      gender: createUserDto.gender ?? null,
+      acceptedTerms,
+      termsAcceptedAt: acceptedTerms ? new Date() : null,
       role: role,
       isActive: true,
     });
