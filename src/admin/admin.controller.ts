@@ -427,7 +427,7 @@ export class AdminController {
     @Body('message') message: string,
     @Request() req,
   ) {
-    return this.adminService.replyToTicket(id, message, req.user.userId);
+    return this.adminService.replyToTicket(id, message, req.user.id);
   }
 
   @Put('support/tickets/:id/status')

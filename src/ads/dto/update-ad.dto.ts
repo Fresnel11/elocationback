@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional, IsBoolean, MinLength, Min, MaxLength, IsArray, IsUUID } from 'class-validator';
 
+// Pas encore appelé par le frontend (pas d'édition d'annonce câblée aujourd'hui), mais
+// `forbidNonWhitelisted: true` (main.ts) ferait 400 sur n'importe lequel de ces champs
+// tant qu'ils manquent ici — gardé aligné sur CreateAdDto pour ne pas le redécouvrir au
+// moment où l'édition sera branchée.
+
 export class UpdateAdDto {
   @ApiProperty({
     description: 'Titre de l\'annonce',
@@ -168,4 +173,85 @@ export class UpdateAdDto {
   @IsOptional()
   @IsBoolean()
   isAvailable?: boolean;
+
+  @ApiProperty({ description: 'Autoriser les réservations en ligne', required: false })
+  @IsOptional()
+  @IsBoolean()
+  allowBooking?: boolean;
+
+  @ApiProperty({ description: 'Marque', required: false })
+  @IsOptional()
+  @IsString()
+  brand?: string;
+
+  @ApiProperty({ description: 'Modèle', required: false })
+  @IsOptional()
+  @IsString()
+  model?: string;
+
+  @ApiProperty({ description: 'Année', required: false })
+  @IsOptional()
+  @IsNumber()
+  year?: number;
+
+  @ApiProperty({ description: 'État', required: false })
+  @IsOptional()
+  @IsString()
+  condition?: string;
+
+  @ApiProperty({ description: 'Couleur', required: false })
+  @IsOptional()
+  @IsString()
+  color?: string;
+
+  @ApiProperty({ description: 'Carburant', required: false })
+  @IsOptional()
+  @IsString()
+  fuel?: string;
+
+  @ApiProperty({ description: 'Transmission', required: false })
+  @IsOptional()
+  @IsString()
+  transmission?: string;
+
+  @ApiProperty({ description: 'Kilométrage', required: false })
+  @IsOptional()
+  @IsNumber()
+  mileage?: number;
+
+  @ApiProperty({ description: 'Taille', required: false })
+  @IsOptional()
+  @IsString()
+  size?: string;
+
+  @ApiProperty({ description: 'Poids', required: false })
+  @IsOptional()
+  @IsString()
+  weight?: string;
+
+  @ApiProperty({ description: 'Puissance', required: false })
+  @IsOptional()
+  @IsString()
+  power?: string;
+
+  @ApiProperty({ description: 'Spécifications', required: false })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  specifications?: string[];
+
+  @ApiProperty({ description: 'Caractéristiques', required: false })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  features?: string[];
+
+  @ApiProperty({
+    description: 'Modalité de paiement',
+    enum: ['monthly', 'daily', 'weekly', 'hourly', 'fixed'],
+    required: false
+  })
+  @IsOptional()
+  @IsString()
+  paymentMode?: string;
 }

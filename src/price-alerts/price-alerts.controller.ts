@@ -9,7 +9,7 @@ export class PriceAlertsController {
 
   @Get()
   async getUserPriceAlerts(@Request() req) {
-    return this.priceAlertsService.getUserPriceAlerts(req.user.userId);
+    return this.priceAlertsService.getUserPriceAlerts(req.user.id);
   }
 
   @Post(':id/read')

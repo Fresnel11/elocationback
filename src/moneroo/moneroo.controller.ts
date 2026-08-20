@@ -1,8 +1,12 @@
-import { Controller, Post, Body, Req, Res, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { MonerooService } from './moneroo.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { PayoutDto } from './dto/payout.dto';
 import { BookingsService } from '../bookings/bookings.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
 
 @Controller('moneroo')
 export class MonerooController {
@@ -12,6 +16,7 @@ export class MonerooController {
   ) {}
 
   @Post('create-payment')
+  @UseGuards(JwtAuthGuard)
   async createPayment(@Body() createPaymentDto: CreatePaymentDto) {
     const { amount, currency, metadata } = createPaymentDto;
     const paymentData = {
@@ -35,15 +40,24 @@ export class MonerooController {
     console.log('Webhook Moneroo reçu :', event);
 
     try {
-      if (event.status === 'success' && event.metadata?.bookingId) {
-        // Confirmer le paiement de la réservation
-        await this.bookingsService.confirmPayment(event.metadata.bookingId, {
-          payment_id: event.payment_id,
-          amount: event.amount,
-          currency: event.currency,
-        });
-        
-        console.log(`Paiement confirmé pour la réservation ${event.metadata.bookingId}`);
+      // Ce endpoint est forcément public (Moneroo l'appelle sans notre JWT), et il
+      // n'existe aucune vérification de signature dans ce projet — le corps de la
+      // requête n'est donc pas fiable en soi : n'importe qui connaissant un
+      // bookingId pouvait forger { status: 'success', metadata: { bookingId } } et
+      // confirmer une réservation sans paiement réel. On revérifie le paiement
+      // directement auprès de Moneroo avant de confirmer quoi que ce soit, comme le
+      // fait déjà correctement /moneroo/payment/return.
+      if (event.payment_id && event.metadata?.bookingId) {
+        const verification = await this.monerooService.verifyPayment(event.payment_id);
+        if (verification.status === 'success') {
+          await this.bookingsService.confirmPayment(event.metadata.bookingId, {
+            payment_id: event.payment_id,
+            amount: verification.amount,
+            currency: verification.currency,
+          });
+
+          console.log(`Paiement confirmé pour la réservation ${event.metadata.bookingId}`);
+        }
       }
     } catch (error) {
       console.error('Erreur lors du traitement du webhook Moneroo:', error);
@@ -54,6 +68,8 @@ export class MonerooController {
   }
 
   @Post('release-funds')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   async releaseFunds(@Body() payoutDto: PayoutDto) {
     const { amount, recipient } = payoutDto;
     return await this.monerooService.initializePayout(amount, recipient);

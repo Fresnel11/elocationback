@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, In, LessThan } from 'typeorm';
+import { Repository, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Booking, BookingStatus } from './entities/booking.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -46,14 +46,20 @@ export class BookingsService {
       throw new BadRequestException('La date de début ne peut pas être dans le passé');
     }
 
-    // Vérifier la disponibilité (inclure PENDING et ACCEPTED pour bloquer temporairement)
-    const conflictingBookings = await this.bookingRepository.find({
-      where: {
-        ad: { id: adId },
-        status: In([BookingStatus.PENDING, BookingStatus.ACCEPTED, BookingStatus.CONFIRMED]),
-        startDate: Between(start, end),
-      },
-    });
+    // Vérifier la disponibilité (inclure PENDING et ACCEPTED pour bloquer temporairement).
+    // `startDate: Between(start, end)` ne détectait que les réservations existantes
+    // *démarrant* dans le nouvel intervalle — une réservation Jan10-Jan20 déjà acceptée
+    // n'empêchait pas une demande Jan15-Jan25 (Jan10 n'est pas dans [Jan15,Jan25]), donc
+    // un double-booking passait. Vraie formule de chevauchement d'intervalles :
+    // existing.startDate < nouvelle.endDate ET existing.endDate > nouvelle.startDate.
+    const conflictingBookings = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .where('booking.adId = :adId', { adId })
+      .andWhere('booking.status IN (:...statuses)', {
+        statuses: [BookingStatus.PENDING, BookingStatus.ACCEPTED, BookingStatus.CONFIRMED],
+      })
+      .andWhere('booking.startDate < :end AND booking.endDate > :start', { start, end })
+      .getMany();
 
     if (conflictingBookings.length > 0) {
       const pendingBookings = conflictingBookings.filter(b => b.status === BookingStatus.PENDING);
@@ -189,6 +195,15 @@ export class BookingsService {
       throw new ForbiddenException('Vous n\'êtes pas autorisé à modifier cette réservation');
     }
 
+    // Ce PATCH générique était le seul verrou pour ACCEPTED : acceptBooking() empêche
+    // bien un locataire de s'auto-accepter via l'endpoint dédié, mais rien n'empêchait
+    // le même locataire d'appeler PATCH /bookings/:id avec { status: 'accepted' } —
+    // il fait partie des deux parties autorisées à modifier la réservation, donc
+    // passait le contrôle de permission ci-dessus sans restriction supplémentaire.
+    if (updateBookingDto.status === BookingStatus.ACCEPTED && booking.owner.id !== user.id) {
+      throw new ForbiddenException('Seul le propriétaire peut accepter une réservation');
+    }
+
     // Seul le propriétaire peut confirmer ET seulement si le paiement a été effectué
     if (updateBookingDto.status === BookingStatus.CONFIRMED) {
       if (booking.owner.id !== user.id) {
@@ -239,8 +254,11 @@ export class BookingsService {
       });
 
     if (startDate && endDate) {
+      // Même bug de chevauchement que dans create() : une réservation existante qui
+      // englobe entièrement l'intervalle demandé (ex. Jan1-Jan30 existante, requête
+      // Jan10-Jan15) n'était détectée ni par l'un ni l'autre des deux BETWEEN.
       query.andWhere(
-        '(booking.startDate BETWEEN :startDate AND :endDate OR booking.endDate BETWEEN :startDate AND :endDate)',
+        'booking.startDate < :endDate AND booking.endDate > :startDate',
         { startDate, endDate }
       );
     }

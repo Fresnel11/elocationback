@@ -23,6 +23,9 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
@@ -160,8 +163,13 @@ export class BookingsController {
     return this.bookingsService.rejectBooking(id, req.user.id, reason);
   }
 
+  // N'importe quel utilisateur connecté pouvait déclencher le virement pour
+  // n'importe quelle réservation (aucun lien avec le locataire/propriétaire de
+  // cette réservation, aucune restriction de rôle) — jamais appelé depuis le
+  // frontend, clairement pensé comme une action interne. Réservé aux admins.
   @Post(':id/release-funds')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Libérer les fonds au propriétaire',

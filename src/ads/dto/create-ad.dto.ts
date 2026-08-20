@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsOptional, IsBoolean, MinLength, Min, MaxLength, IsArray, IsUUID, IsEnum, Matches } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, MinLength, Min, MaxLength, IsArray, IsUUID, IsEnum, Matches, ArrayMinSize } from 'class-validator';
 import { AdPublisherRole } from '../../common/enums/ad-publisher-role.enum';
 
 export class CreateAdDto {
@@ -117,6 +117,7 @@ export class CreateAdDto {
     example: ['photo1.jpg', 'photo2.jpg']
   })
   @IsArray()
+  @ArrayMinSize(1, { message: 'Au moins une photo est requise' })
   @IsString({ each: true })
   photos!: string[];
 
